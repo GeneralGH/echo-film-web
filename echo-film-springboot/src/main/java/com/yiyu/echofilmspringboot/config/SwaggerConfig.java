@@ -25,7 +25,7 @@ public class SwaggerConfig {
     public Docket restApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("标准接口")
-                .apiInfo(apiInfo("Spring Boot中使用Swagger2构建RESTful APIs", "1.0"))
+                .apiInfo(apiInfo("回声影视", "1.0"))
                 .useDefaultResponseMessages(true)
                 .forCodeGeneration(false)
                 .select()
@@ -43,9 +43,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(String title, String version) {
         return new ApiInfoBuilder()
                 .title(title)
-                .description("更多请关注: https://blog.csdn.net/xqnode")
-                .termsOfServiceUrl("https://blog.csdn.net/xqnode")
-                .contact(new Contact("xqnode", "https://blog.csdn.net/xqnode", "xiaqingweb@163.com"))
+                .description("回声影视前后端项目")
                 .version(version)
                 .build();
     }
