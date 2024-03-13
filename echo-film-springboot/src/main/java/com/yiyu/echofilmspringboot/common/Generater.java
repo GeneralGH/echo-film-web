@@ -14,6 +14,7 @@ public class Generater {
         FastAutoGenerator.create("jdbc:mysql://localhost:3306/echo_film?serverTimezone=UTC", "root", "123456")
                 .globalConfig(builder -> {
                     builder.author("yiyu") // 设置作者
+                            .enableSwagger()
                             .dateType(DateType.TIME_PACK)//时间策略
                             .commentDate("yyyy-MM-dd")//注释日期
                             .outputDir(System.getProperty("user.dir")+"\\src\\main\\java"); // 指定输出目录

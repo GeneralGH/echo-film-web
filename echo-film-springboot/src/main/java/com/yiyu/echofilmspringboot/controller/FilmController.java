@@ -1,12 +1,19 @@
 package com.yiyu.echofilmspringboot.controller;
 
 
-import io.swagger.annotations.Api;
+import com.github.pagehelper.PageInfo;
+import com.yiyu.echofilmspringboot.common.FilmListRequest;
+import com.yiyu.echofilmspringboot.common.PageRequest;
+import com.yiyu.echofilmspringboot.common.Result;
+import com.yiyu.echofilmspringboot.entity.Film;
+import com.yiyu.echofilmspringboot.service.IFilmService;
+import com.yiyu.echofilmspringboot.service.IFilmtypeService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -14,15 +21,39 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author yiyu
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @RestController
 @RequestMapping("/film")
-@Api("影视")
 public class FilmController {
-    @GetMapping("/getFilmList")
-    @ApiOperation("列表")
-    public String getList() {
-        return "12";
+    @Autowired
+    private IFilmService filmService;
+
+    @ApiOperation("分页查询影视列表")
+    @PostMapping("/getFilmList")
+    public Result<List<Film>> getFilmList(@RequestBody FilmListRequest request) {
+        int pageNum = request.getPageNum();
+        int pageSize = request.getPageSize();
+        String name = request.getName();
+        String filmType = request.getFilmType();
+        return filmService.getFilmsList(pageNum, pageSize, name, filmType);
+    }
+
+    @ApiOperation("新增影视")
+    @PostMapping("/addFilm")
+    public Result addFilm(@RequestBody Film film) {
+        return filmService.addFilm(film);
+    }
+
+    @ApiOperation("修改影视")
+    @PutMapping("/updateFilm")
+    public Result updateFilm(@RequestBody Film film) {
+        return filmService.updateFilm(film);
+    }
+
+    @ApiOperation("删除影视")
+    @DeleteMapping("/delFilm/{id}")
+    public Result delFilm(@PathVariable Long id) {
+        return filmService.delFilm(id);
     }
 }

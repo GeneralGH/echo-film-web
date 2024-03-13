@@ -3,6 +3,8 @@ package com.yiyu.echofilmspringboot.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,38 +14,29 @@ import lombok.Setter;
  * </p>
  *
  * @author yiyu
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Getter
 @Setter
+@ApiModel(value = "User对象", description = "用户")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty("用户id")
     @TableId(value = "user_id", type = IdType.AUTO)
     private Integer userId;
 
-    /**
-     * 账号
-     */
+    @ApiModelProperty("账号")
     private String userAccount;
 
-    /**
-     * 密码
-     */
+    @ApiModelProperty("密码")
     private String userPassword;
 
-    /**
-     * 昵称
-     */
+    @ApiModelProperty("昵称")
     private String userName;
 
-    /**
-     * 收藏
-     */
+    @ApiModelProperty("收藏")
     private String collect;
 
 
