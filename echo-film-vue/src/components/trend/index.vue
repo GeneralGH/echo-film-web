@@ -12,7 +12,7 @@
         <path d="M11.5 8L8 11.5L4.5 8" stroke="currentColor" stroke-width="1.5" />
         <path d="M8 11L8 4" stroke="currentColor" stroke-width="1.5" />
       </svg>
-      <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" v-else>
         <path d="M4.5 8L8 4.5L11.5 8" stroke="currentColor" stroke-width="1.5" />
         <path d="M8 5V12" stroke="currentColor" stroke-width="1.5" />
       </svg>
@@ -20,36 +20,42 @@
     <span>{{ describe }}</span>
   </span>
 </template>
-<script setup lang="ts">
-import { computed } from 'vue';
+<script>
+import Vue from 'vue';
 
-const props = defineProps({
-  type: String,
-  describe: [String, Number],
-  isReverseColor: {
-    type: Boolean,
-    default: false,
+export default Vue.extend({
+  name: 'Trend',
+
+  props: {
+    type: String,
+    describe: [String, Number],
+    isReverseColor: Boolean,
+  },
+  computed: {
+    containerCls() {
+      return [
+        'trend-container',
+        {
+          'trend-container__reverse': this.isReverseColor,
+          'trend-container__up': !this.isReverseColor && this.type === 'up',
+          'trend-container__down': !this.isReverseColor && this.type === 'down',
+        },
+      ];
+    },
+    iconCls() {
+      return ['trend-icon-container'];
+    },
   },
 });
-
-const containerCls = computed(() => {
-  const { isReverseColor, type } = props;
-  return [
-    'trend-container',
-    {
-      'trend-container__reverse': isReverseColor,
-      'trend-container__up': !isReverseColor && type === 'up',
-      'trend-container__down': !isReverseColor && type === 'down',
-    },
-  ];
-});
-
-const iconCls = computed(() => ['trend-icon-container']);
 </script>
 
 <style lang="less" scoped>
+@import '@/style/variables.less';
+
 .trend {
+
   &-container {
+
     &__up {
       color: var(--td-error-color);
       display: inline-flex;
@@ -75,7 +81,7 @@ const iconCls = computed(() => ['trend-icon-container']);
     }
 
     &__reverse {
-      color: #fff;
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       justify-content: center;

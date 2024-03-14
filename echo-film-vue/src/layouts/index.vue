@@ -1,75 +1,100 @@
 <template>
   <div>
-    <template v-if="setting.layout.value === 'side'">
-      <t-layout key="side" :class="mainLayoutCls">
-        <t-aside><layout-side-nav /></t-aside>
+    <template v-if="setting.layout === 'side'">
+      <t-layout key="side">
+        <t-aside><layout-sidebar /></t-aside>
         <t-layout>
           <t-header><layout-header /></t-header>
           <t-content><layout-content /></t-content>
         </t-layout>
       </t-layout>
     </template>
-
+    <template v-else-if="setting.layout === 'top'">
+      <t-layout key="top">
+        <t-header> <layout-header /></t-header>
+        <t-content><layout-content /></t-content>
+      </t-layout>
+    </template>
     <template v-else>
-      <t-layout key="no-side">
-        <t-header><layout-header /> </t-header>
-        <t-layout :class="mainLayoutCls">
-          <layout-side-nav />
-          <layout-content />
+      <t-layout key="mix">
+        <t-header><layout-header /></t-header>
+        <t-layout>
+          <t-aside><layout-sidebar /></t-aside>
+          <t-content><layout-content /></t-content>
         </t-layout>
       </t-layout>
     </template>
-    <setting-com />
+    <setting />
   </div>
 </template>
 
-<script setup lang="ts">
-import '@/style/layout.less';
+<script lang="ts">
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
-import { storeToRefs } from 'pinia';
-import { computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import LayoutHeader from './components/LayoutHeader.vue';
+import LayoutContent from './components/LayoutContent.vue';
+import LayoutSidebar from './components/LayoutSidebar.vue';
+import Setting from './setting.vue';
 
 import { prefix } from '@/config/global';
-import { useSettingStore, useTabsRouterStore } from '@/store';
+import { SettingType } from '@/interface';
 
-import LayoutContent from './components/LayoutContent.vue';
-import LayoutHeader from './components/LayoutHeader.vue';
-import LayoutSideNav from './components/LayoutSideNav.vue';
-import SettingCom from './setting.vue';
+import '@/style/layout.less';
 
-const route = useRoute();
-const settingStore = useSettingStore();
-const tabsRouterStore = useTabsRouterStore();
-const setting = storeToRefs(settingStore);
+const name = `${prefix}-base-layout`;
 
-const mainLayoutCls = computed(() => [
-  {
-    't-layout--with-sider': settingStore.showSidebar,
+export default Vue.extend({
+  name,
+  components: {
+    LayoutHeader,
+    LayoutContent,
+    LayoutSidebar,
+    Setting,
   },
-]);
+  computed: {
+    ...mapGetters({
+      tabRouterList: 'tabRouter/tabRouterList',
+    }),
+    setting(): SettingType {
+      return this.$store.state.setting;
+    },
+  },
+  watch: {
+    $route(newRoute) {
+      // 监听路由变化往多标签新增
+      const {
+        path,
+        meta: { title },
+        name,
+      } = newRoute;
+      this.$store.commit('tabRouter/appendTabRouterList', { path, title, name, isAlive: true });
+    },
+  },
+  // 如果不需要持久化标签页可以注释掉created和destroyed的内容
+  created() {
+    window.addEventListener('beforeunload', this.setTabRouterListCache);
+  },
+  destroyed() {
+    window.removeEventListener('beforeunload', this.setTabRouterListCache);
+  },
+  mounted() {
+    const {
+      path,
+      meta: { title },
+      name,
+    } = this.$route;
 
-const appendNewRoute = () => {
-  const {
-    path,
-    query,
-    meta: { title },
-    name,
-  } = route;
-  tabsRouterStore.appendTabRouterList({ path, query, title: title as string, name, isAlive: true, meta: route.meta });
-};
-
-onMounted(() => {
-  appendNewRoute();
+    if (localStorage.getItem('tabRouterList')) this.getTabRouterListCache();
+    this.$store.commit('tabRouter/appendTabRouterList', { path, title, name, isAlive: true });
+  },
+  methods: {
+    getTabRouterListCache() {
+      this.$store.commit('tabRouter/initTabRouterList', JSON.parse(localStorage.getItem('tabRouterList')));
+    },
+    setTabRouterListCache() {
+      localStorage.setItem('tabRouterList', JSON.stringify(this.tabRouterList));
+    },
+  },
 });
-
-watch(
-  () => route.path,
-  () => {
-    appendNewRoute();
-    document.querySelector(`.${prefix}-layout`).scrollTo({ top: 0, behavior: 'smooth' });
-  },
-);
 </script>
-
-<style lang="less" scoped></style>

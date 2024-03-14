@@ -13,7 +13,7 @@
     </template>
     <template #status>
       <t-tag :theme="product.isSetup ? 'success' : 'default'" :disabled="!product.isSetup">{{
-        product.isSetup ? $t('components.isSetup.on') : $t('components.isSetup.off')
+        product.isSetup ? '已启用' : '已停用'
       }}</t-tag>
     </template>
     <template #content>
@@ -36,14 +36,14 @@
         trigger="click"
         :options="[
           {
-            content: $t('components.manage'),
+            content: '管理',
             value: 'manage',
-            onClick: () => handleClickManage(product),
+            onClick: () => handleManageProduct(product),
           },
           {
-            content: $t('components.delete'),
+            content: '删除',
             value: 'delete',
-            onClick: () => handleClickDelete(product),
+            onClick: () => handleDeleteItem(product),
           },
         ]"
       >
@@ -54,46 +54,42 @@
     </template>
   </t-card>
 </template>
-<script setup lang="ts">
-import {
-  AddIcon,
-  CalendarIcon,
-  LaptopIcon,
-  MoreIcon,
-  ServiceIcon,
-  ShopIcon,
-  UserAvatarIcon,
-} from 'tdesign-icons-vue-next';
-import type { PropType } from 'vue';
+<script lang="ts">
+import { ShopIcon, CalendarIcon, ServiceIcon, UserAvatarIcon, LaptopIcon, MoreIcon, AddIcon } from 'tdesign-icons-vue';
 
-export interface CardProductType {
-  type: number;
-  isSetup: boolean;
-  description: string;
-  name: string;
-}
-
-// eslint-disable-next-line
-const props = defineProps({
-  product: {
-    type: Object as PropType<CardProductType>,
+export default {
+  name: 'ListCard',
+  components: {
+    ShopIcon,
+    CalendarIcon,
+    ServiceIcon,
+    UserAvatarIcon,
+    LaptopIcon,
+    MoreIcon,
+    AddIcon,
   },
-});
-
-const emit = defineEmits(['manage-product', 'delete-item']);
-
-const typeMap = ['A', 'B', 'C', 'D', 'E'];
-
-const handleClickManage = (product: CardProductType) => {
-  emit('manage-product', product);
-};
-
-const handleClickDelete = (product: CardProductType) => {
-  emit('delete-item', product);
+  props: {
+    product: {
+      type: Object,
+    },
+  },
+  data() {
+    return { typeMap: ['A', 'B', 'C', 'D', 'E'] };
+  },
+  methods: {
+    handleManageProduct(product) {
+      this.$emit('manage-product', product);
+    },
+    handleDeleteItem(product) {
+      this.$emit('delete-item', product);
+    },
+  },
 };
 </script>
 
 <style lang="less" scoped>
+@import '@/style/variables';
+
 .list-card-item {
   display: flex;
   flex-direction: column;
@@ -103,19 +99,22 @@ const handleClickDelete = (product: CardProductType) => {
     min-height: 140px;
 
     &--name {
-      margin-bottom: var(--td-comp-margin-s);
-      font: var(--td-font-title-medium);
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 400;
       color: var(--td-text-color-primary);
     }
 
     &--desc {
       color: var(--td-text-color-secondary);
-      font: var(--td-font-body-small);
+      font-size: 12px;
+      line-height: 20px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      height: 40px;
     }
   }
 }

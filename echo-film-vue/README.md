@@ -2,30 +2,30 @@
 
 </p>
 <p align="center">
-  <a href="https://tdesign.tencent.com/starter/vue-next/#/dashboard/base" target="_blank">
+  <a href="https://tdesign.tencent.com/starter/vue/#/dashboard/base" target="_blank">
     <img alt="TDesign Logo" width="200" src="https://tdesign.gtimg.com/starter/brand-logo.svg">
   </a>
 </p>
 
 <p align="center">
   <a href="https://nodejs.org/en/about/releases/"><img src="https://img.shields.io/node/v/vite.svg" alt="node compatility"></a>
-  <a href="https://github.com/Tencent/tdesign-vue-next/blob/develop/LICENSE">
-    <img src="https://img.shields.io/npm/l/tdesign-vue-next.svg?sanitize=true" alt="License">
+  <a href="https://github.com/Tencent/tdesign-vue/blob/develop/LICENSE">
+    <img src="https://img.shields.io/npm/l/tdesign-vue.svg?sanitize=true" alt="License">
   </a>
 </p>
 
 English | [简体中文](./README-zh_CN.md) 
 ### Introduction
 
-TDesign Vue Next Starter is a TDesign-based developed with `Vue 3`, `Vite`, `Pinia`, `TypeScript`. It can be customized theme configuration, and aims to provide project out-of-the-box, configuration-style middle and background projects.
+TDesign Vue Starter is a TDesign-based project developed with `Vue2`, `Vite`. It can be customized theme configuration, and aims to provide project out-of-the-box, configuration-style middle and background projects.
 
 <p>
-  <a href="http://tdesign.tencent.com/starter/vue-next/">Live Preview</a>
+  <a href="http://tdesign.tencent.com/starter/vue/">Live Preview</a>
   ·
-  <a href="https://tdesign.tencent.com/starter/">Documentation</a>
+  <a href="https://tdesign.tencent.com/starter/docs/vue/get-started">Documentation</a>
 </p>
 
-<img src="docs/starter.png">
+<img src="docs/docs-starter.png">
 
 ### Features
 
@@ -72,7 +72,7 @@ npm run build:test
 
 ### Contributing Guide
 
-We welcome contributions to our project. Create your [Issue](https://github.com/tencent/tdesign-vue-next-starter/issues/new/choose) or Submit your [Pull Request](https://github.com/Tencent/tdesign-vue-next-starter/pulls).
+We welcome contributions to our project. Create your [Issue](https://github.com/tencent/tdesign-vue-starter/issues/new/choose) or Submit your [Pull Request](https://github.com/Tencent/tdesign-vue-starter/pulls).
 
 #### Commit Specification
 

@@ -1,13 +1,13 @@
 <template>
   <div v-if="layout === 'side'" class="header-menu-search">
     <t-input
-      :class="['header-search', { 'hover-active': isSearchFocus }]"
-      :placeholder="$t('layout.searchPlaceholder')"
+      :class="{ 'hover-active': isSearchFocus }"
+      placeholder="请输入搜索内容"
       @blur="changeSearchFocus(false)"
       @focus="changeSearchFocus(true)"
     >
       <template #prefix-icon>
-        <t-icon class="icon" name="search" size="16" />
+        <search-icon class="icon" size="16" />
       </template>
     </t-input>
   </div>
@@ -20,9 +20,10 @@
       variant="text"
       @click="changeSearchFocus(true)"
     >
-      <t-icon name="search" />
+      <search-icon />
     </t-button>
     <t-input
+      ref="inputRef"
       v-model="searchData"
       :class="['header-search', { 'width-zero': !isSearchFocus }]"
       placeholder="输入要搜索内容"
@@ -30,75 +31,96 @@
       @blur="changeSearchFocus(false)"
     >
       <template #prefix-icon>
-        <t-icon name="search" size="16" />
+        <search-icon size="16" />
       </template>
     </t-input>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
+<script lang="ts">
+import Vue, { PropType } from 'vue';
+import { SearchIcon } from 'tdesign-icons-vue';
 
-defineProps({
-  layout: String,
+export default Vue.extend({
+  components: {
+    SearchIcon,
+  },
+  props: {
+    layout: {
+      type: String as PropType<string>,
+    },
+  },
+  data() {
+    return {
+      isSearchFocus: false,
+      searchData: '',
+    };
+  },
+  methods: {
+    changeSearchFocus(value: boolean) {
+      if (!value) {
+        this.searchData = '';
+      }
+      this.isSearchFocus = value;
+    },
+  },
 });
-
-const isSearchFocus = ref(false);
-const searchData = ref('');
-const changeSearchFocus = (value: boolean) => {
-  if (!value) {
-    searchData.value = '';
-  }
-  isSearchFocus.value = value;
-};
 </script>
 <style lang="less" scoped>
+@import '@/style/variables.less';
+
 .header-menu-search {
   display: flex;
   margin-left: 16px;
 
   .hover-active {
-    background: var(--td-bg-color-secondarycontainer);
+    .t-input {
+      background: var(--td-bg-color-secondarycontainer);
+    }
+
+    /deep/ .t-icon {
+      color: var(--td-brand-color);
+    }
   }
 
-  .t-icon {
-    color: var(--td-text-color-primary) !important;
+  /deep/ .t-icon {
+    font-size: 20px;
+    color: var(--td-text-color-primary);
   }
 
-  .header-search {
-    :deep(.t-input) {
-      border: none;
-      outline: none;
-      box-shadow: none;
-      transition: background @anim-duration-base linear;
+  .t-input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    transition: background @anim-duration-base linear;
 
-      .t-input__inner {
-        transition: background @anim-duration-base linear;
-        background: none;
-      }
-
-      &:hover {
-        background: var(--td-bg-color-secondarycontainer);
-
-        .t-input__inner {
-          background: var(--td-bg-color-secondarycontainer);
-        }
-      }
+    &:hover {
+      background: var(--td-bg-color-secondarycontainer);
     }
   }
 }
 
-.t-button {
-  margin: 0 8px;
-  transition: opacity @anim-duration-base @anim-time-fn-easing;
+.header-search {
+  width: 200px;
+  transition: width @anim-duration-base @anim-time-fn-easing;
 
-  .t-icon {
-    font-size: 20px;
+  .t-input {
+    border: 0;
+    padding-left: 40px;
 
-    &.general {
-      margin-right: 16px;
+    &:focus {
+      box-shadow: none;
     }
   }
+
+  &.width-zero {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+.t-button {
+  transition: opacity @anim-duration-base @anim-time-fn-easing;
 }
 
 .search-icon-hide {
@@ -108,23 +130,5 @@ const changeSearchFocus = (value: boolean) => {
 .header-menu-search-left {
   display: flex;
   align-items: center;
-
-  .header-search {
-    width: 200px;
-    transition: width @anim-duration-base @anim-time-fn-easing;
-
-    :deep(.t-input) {
-      border: 0;
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-
-    &.width-zero {
-      width: 0;
-      opacity: 0;
-    }
-  }
 }
 </style>

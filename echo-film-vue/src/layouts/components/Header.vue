@@ -1,231 +1,178 @@
 <template>
   <div :class="layoutCls">
-    <t-head-menu :class="menuCls" :theme="menuTheme" expand-type="popup" :value="active">
+    <t-head-menu :class="menuCls" :theme="theme" expandType="popup" :value="active">
       <template #logo>
         <span v-if="showLogo" class="header-logo-container" @click="handleNav('/dashboard/base')">
           <logo-full class="t-logo" />
         </span>
         <div v-else class="header-operate-left">
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
-            <t-icon class="collapsed-icon" name="view-list" />
+            <view-list-icon class="collapsed-icon" />
           </t-button>
-          <search :layout="layout" />
         </div>
       </template>
-      <template v-if="layout !== 'side'" #default>
-        <menu-content class="header-menu" :nav-data="menu" />
-      </template>
+      <menu-content v-show="layout !== 'side'" class="header-menu" :navData="menu" />
       <template #operations>
         <div class="operations-container">
-          <!-- 搜索框 -->
-          <search v-if="layout !== 'side'" :layout="layout" />
-
-          <!-- 全局通知 -->
-          <notice />
-
-          <t-tooltip placement="bottom" :content="$t('layout.header.code')">
-            <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
-              <t-icon name="logo-github" />
-            </t-button>
-          </t-tooltip>
-          <t-tooltip placement="bottom" :content="$t('layout.header.help')">
-            <t-button theme="default" shape="square" variant="text" @click="navToHelper">
-              <t-icon name="help-circle" />
-            </t-button>
-          </t-tooltip>
-          <t-dropdown trigger="click">
-            <t-button theme="default" shape="square" variant="text">
-              <translate-icon />
-            </t-button>
-            <t-dropdown-menu>
-              <t-dropdown-item
-                v-for="(lang, index) in langList"
-                :key="index"
-                :value="lang.value"
-                @click="(options) => changeLang(options.value as string)"
-                >{{ lang.content }}</t-dropdown-item
-              ></t-dropdown-menu
-            >
-          </t-dropdown>
-          <t-dropdown :min-column-width="120" trigger="click">
+          <t-dropdown :min-column-width="125" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
-                <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
-                  <user-circle-icon />{{ $t('layout.header.user') }}
-                </t-dropdown-item>
+                <!-- <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
+                  <user-circle-icon />个人中心
+                </t-dropdown-item> -->
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
-                  <poweroff-icon />{{ $t('layout.header.signOut') }}
+                  <poweroff-icon />退出登录
                 </t-dropdown-item>
               </t-dropdown-menu>
             </template>
             <t-button class="header-user-btn" theme="default" variant="text">
               <template #icon>
-                <t-icon class="header-user-avatar" name="user-circle" />
+                <user-circle-icon class="header-user-avatar" />
               </template>
-              <div class="header-user-account">{{ user.userInfo.name }}</div>
-              <template #suffix><chevron-down-icon /></template>
+              <div class="header-user-account">Tencent</div>
+              <template #suffix>
+                <chevron-down-icon />
+              </template>
             </t-button>
           </t-dropdown>
-          <t-tooltip placement="bottom" :content="$t('layout.header.setting')">
+          <!-- <t-tooltip placement="bottom" content="系统设置">
             <t-button theme="default" shape="square" variant="text" @click="toggleSettingPanel">
               <setting-icon />
             </t-button>
-          </t-tooltip>
+          </t-tooltip> -->
         </div>
       </template>
     </t-head-menu>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ChevronDownIcon, PoweroffIcon, SettingIcon, TranslateIcon, UserCircleIcon } from 'tdesign-icons-vue-next';
-import type { PropType } from 'vue';
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-
-import LogoFull from '@/assets/assets-logo-full.svg?component';
+<script>
+import Vue from 'vue';
+import {
+  ViewListIcon,
+  LogoGithubIcon,
+  HelpCircleIcon,
+  UserCircleIcon,
+  PoweroffIcon,
+  SettingIcon,
+  ChevronDownIcon,
+} from 'tdesign-icons-vue';
 import { prefix } from '@/config/global';
-import { langList } from '@/locales/index';
-import { useLocale } from '@/locales/useLocale';
-import { getActive } from '@/router';
-import { useSettingStore, useUserStore } from '@/store';
-import type { MenuRoute, ModeType } from '@/types/interface';
+import LogoFull from '@/assets/assets-logo-full.svg';
 
-import MenuContent from './MenuContent.vue';
 import Notice from './Notice.vue';
 import Search from './Search.vue';
+import MenuContent from './MenuContent.vue';
 
-const props = defineProps({
-  theme: {
-    type: String,
-    default: 'light',
+export default Vue.extend({
+  components: {
+    MenuContent,
+    LogoFull,
+    Notice,
+    Search,
+    ViewListIcon,
+    LogoGithubIcon,
+    HelpCircleIcon,
+    UserCircleIcon,
+    PoweroffIcon,
+    SettingIcon,
+    ChevronDownIcon,
   },
-  layout: {
-    type: String,
-    default: 'top',
-  },
-  showLogo: {
-    type: Boolean,
-    default: true,
-  },
-  menu: {
-    type: Array as PropType<MenuRoute[]>,
-    default: () => [],
-  },
-  isFixed: {
-    type: Boolean,
-    default: false,
-  },
-  isCompact: {
-    type: Boolean,
-    default: false,
-  },
-  maxLevel: {
-    type: Number,
-    default: 3,
-  },
-});
-
-const router = useRouter();
-const settingStore = useSettingStore();
-const user = useUserStore();
-
-const toggleSettingPanel = () => {
-  settingStore.updateConfig({
-    showSettingPanel: true,
-  });
-};
-
-const active = computed(() => getActive());
-
-const layoutCls = computed(() => [`${prefix}-header-layout`]);
-
-const menuCls = computed(() => {
-  const { isFixed, layout, isCompact } = props;
-  return [
-    {
-      [`${prefix}-header-menu`]: !isFixed,
-      [`${prefix}-header-menu-fixed`]: isFixed,
-      [`${prefix}-header-menu-fixed-side`]: layout === 'side' && isFixed,
-      [`${prefix}-header-menu-fixed-side-compact`]: layout === 'side' && isFixed && isCompact,
+  props: {
+    theme: String,
+    layout: {
+      type: String,
+      default: 'top',
     },
-  ];
-});
-const menuTheme = computed(() => props.theme as ModeType);
-
-// 切换语言
-const { changeLocale } = useLocale();
-const changeLang = (lang: string) => {
-  changeLocale(lang);
-};
-
-const changeCollapsed = () => {
-  settingStore.updateConfig({
-    isSidebarCompact: !settingStore.isSidebarCompact,
-  });
-};
-
-const handleNav = (url: string) => {
-  router.push(url);
-};
-
-const handleLogout = () => {
-  router.push({
-    path: '/login',
-    query: { redirect: encodeURIComponent(router.currentRoute.value.fullPath) },
-  });
-};
-
-const navToGitHub = () => {
-  window.open('https://github.com/tencent/tdesign-vue-next-starter');
-};
-
-const navToHelper = () => {
-  window.open('http://tdesign.tencent.com/starter/docs/get-started');
-};
-</script>
-<style lang="less" scoped>
-.@{starter-prefix}-header {
-  &-menu-fixed {
-    position: fixed;
-    top: 0;
-    z-index: 1001;
-
-    :deep(.t-head-menu__inner) {
-      padding-right: var(--td-comp-margin-xl);
-    }
-
-    &-side {
-      left: 232px;
-      right: 0;
-      z-index: 10;
-      width: auto;
-      transition: all 0.3s;
-
-      &-compact {
-        left: 64px;
+    showLogo: {
+      type: Boolean,
+      default: true,
+    },
+    menu: {
+      type: Array,
+    },
+    isFixed: {
+      type: Boolean,
+      default: false,
+    },
+    isCompact: {
+      type: Boolean,
+      default: false,
+    },
+    maxLevel: {
+      type: Number,
+      default: 3,
+    },
+  },
+  data() {
+    return {
+      prefix,
+      visibleNotice: false,
+      isSearchFocus: false,
+    };
+  },
+  computed: {
+    active() {
+      if (!this.$route.path) {
+        return '';
       }
-    }
-  }
-
-  &-logo-container {
-    cursor: pointer;
-    display: inline-flex;
-  }
-}
+      return this.$route.path
+        .split('/')
+        .filter((item, index) => index <= this.maxLevel && index > 0)
+        .map((item) => `/${item}`)
+        .join('');
+    },
+    showMenu() {
+      return !(this.layout === 'mix' && this.showLogo === 'side');
+    },
+    layoutCls() {
+      return [`${this.prefix}-header-layout`];
+    },
+    menuCls() {
+      return [
+        {
+          [`${this.prefix}-header-menu`]: !this.isFixed,
+          [`${this.prefix}-header-menu-fixed`]: this.isFixed,
+          [`${this.prefix}-header-menu-fixed-side`]: this.layout === 'side' && this.isFixed,
+          [`${this.prefix}-header-menu-fixed-side-compact`]: this.layout === 'side' && this.isFixed && this.isCompact,
+        },
+      ];
+    },
+  },
+  methods: {
+    toggleSettingPanel() {
+      this.$store.commit('setting/toggleSettingPanel', true);
+    },
+    handleLogout() {
+      this.$router.push(`/login?redirect=${this.$router.history.current.fullPath}`);
+    },
+    changeCollapsed() {
+      this.$store.commit('setting/toggleSidebarCompact');
+    },
+    handleNav(url) {
+      this.$router.push(url);
+    },
+    navToGitHub() {
+      window.open('https://github.com/Tencent/tdesign-vue-starter');
+    },
+    navToHelper() {
+      window.open('http://tdesign.tencent.com/starter/docs/get-started');
+    },
+  },
+});
+</script>
+<style lang="less">
+@import '@/style/variables.less';
 
 .header-menu {
   flex: 1 1 1;
   display: inline-flex;
-
-  :deep(.t-menu__item) {
-    min-width: unset;
-  }
 }
 
 .operations-container {
   display: flex;
   align-items: center;
+  margin-right: 12px;
 
   .t-popup__reference {
     display: flex;
@@ -234,14 +181,31 @@ const navToHelper = () => {
   }
 
   .t-button {
-    margin-left: var(--td-comp-margin-l);
+    margin: 0 8px;
+
+    &.header-user-btn {
+      margin: 0;
+    }
+  }
+
+  .t-icon {
+    font-size: 20px;
+
+    &.general {
+      margin-right: 16px;
+    }
   }
 }
 
 .header-operate-left {
   display: flex;
+  margin-left: 20px;
   align-items: normal;
   line-height: 0;
+
+  .collapsed-icon {
+    font-size: 20px;
+  }
 }
 
 .header-logo-container {
@@ -269,10 +233,15 @@ const navToHelper = () => {
   display: inline-flex;
   align-items: center;
   color: var(--td-text-color-primary);
+
+  .t-icon {
+    margin-left: 4px;
+    font-size: 16px;
+  }
 }
 
-:deep(.t-head-menu__inner) {
-  border-bottom: 1px solid var(--td-component-stroke);
+.t-head-menu__inner {
+  border-bottom: 1px solid var(--td-border-level-1-color);
 }
 
 .t-menu--light {
@@ -287,7 +256,15 @@ const navToHelper = () => {
   }
 
   .header-user-account {
-    color: rgb(255 255 255 / 55%);
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .t-button {
+    --ripple-color: var(--td-gray-color-10) !important;
+
+    &:hover {
+      background: var(--td-gray-color-12) !important;
+    }
   }
 }
 
@@ -296,35 +273,32 @@ const navToHelper = () => {
   display: flex;
   align-items: center;
 
-  :deep(.t-dropdown__item-text) {
-    display: flex;
-    align-items: center;
-  }
-
   .t-icon {
-    font-size: var(--td-comp-size-xxxs);
-    margin-right: var(--td-comp-margin-s);
+    margin-right: 8px;
   }
 
-  :deep(.t-dropdown__item) {
+  .t-dropdown__item {
+    .t-dropdown__item__content {
+      display: flex;
+      justify-content: center;
+    }
+
+    .t-dropdown__item__content__text {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+  }
+
+  .t-dropdown__item {
     width: 100%;
-    margin-bottom: 0;
+    margin-bottom: 0px;
   }
 
   &:last-child {
-    :deep(.t-dropdown__item) {
+    .t-dropdown__item {
       margin-bottom: 8px;
     }
-  }
-}
-</style>
-
-<!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
-<style lang="less">
-.operations-dropdown-container-item {
-  .t-dropdown__item-text {
-    display: flex;
-    align-items: center;
   }
 }
 </style>

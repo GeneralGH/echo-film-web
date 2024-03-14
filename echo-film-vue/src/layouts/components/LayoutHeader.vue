@@ -1,36 +1,52 @@
 <template>
-  <l-header
-    v-if="settingStore.showHeader"
-    :show-logo="settingStore.showHeaderLogo"
-    :theme="settingStore.displayMode"
-    :layout="settingStore.layout"
-    :is-fixed="settingStore.isHeaderFixed"
+  <common-header
+    v-if="showHeader"
+    :showLogo="showHeaderLogo"
+    :theme="mode"
+    :layout="setting.layout"
+    :isFixed="setting.isHeaderFixed"
     :menu="headerMenu"
-    :is-compact="settingStore.isSidebarCompact"
+    :isCompact="setting.isSidebarCompact"
+    :maxLevel="setting.splitMenu ? 1 : 3"
   />
 </template>
 
-<script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+<script lang="ts">
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
+import CommonHeader from './Header.vue';
 
-import { usePermissionStore, useSettingStore } from '@/store';
+import { SettingType } from '@/interface';
 
-import LHeader from './Header.vue';
-
-const permissionStore = usePermissionStore();
-const settingStore = useSettingStore();
-const { routers: menuRouters } = storeToRefs(permissionStore);
-const headerMenu = computed(() => {
-  if (settingStore.layout === 'mix') {
-    if (settingStore.splitMenu) {
-      return menuRouters.value.map((menu) => ({
-        ...menu,
-        children: [],
-      }));
-    }
-    return [];
-  }
-  return menuRouters.value;
+export default Vue.extend({
+  name: 'LayoutHeader',
+  components: {
+    CommonHeader,
+  },
+  computed: {
+    ...mapGetters({
+      showHeader: 'setting/showHeader',
+      showHeaderLogo: 'setting/showHeaderLogo',
+      mode: 'setting/mode',
+      menuRouters: 'permission/routers',
+    }),
+    setting(): SettingType {
+      return this.$store.state.setting;
+    },
+    headerMenu() {
+      const { layout, splitMenu } = this.$store.state.setting;
+      const { menuRouters } = this;
+      if (layout === 'mix') {
+        if (splitMenu) {
+          return menuRouters.map((menu) => ({
+            ...menu,
+            children: [],
+          }));
+        }
+        return [];
+      }
+      return menuRouters;
+    },
+  },
 });
 </script>

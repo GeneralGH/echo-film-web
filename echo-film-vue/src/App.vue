@@ -1,24 +1,19 @@
 <template>
-  <t-config-provider :global-config="getComponentsLocale">
-    <router-view :key="locale" :class="[mode]" />
-  </t-config-provider>
+  <router-view :class="[mode]" />
 </template>
-<script setup lang="ts">
-import { computed } from 'vue';
 
-import { useLocale } from '@/locales/useLocale';
-import { useSettingStore } from '@/store';
+<script>
+import Vue from 'vue';
+import config from '@/config/style';
 
-const store = useSettingStore();
-
-const mode = computed(() => {
-  return store.displayMode;
+export default Vue.extend({
+  computed: {
+    mode() {
+      return this.$store.getters['setting/mode'];
+    },
+  },
+  mounted() {
+    this.$store.dispatch('setting/changeTheme', { ...config });
+  },
 });
-
-const { getComponentsLocale, locale } = useLocale();
 </script>
-<style lang="less" scoped>
-#nprogress .bar {
-  background: var(--td-brand-color) !important;
-}
-</style>

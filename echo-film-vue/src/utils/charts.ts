@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
 
 /**
- * 获取表头数据
- *
  * @export
  * @param {string[]} dateTime
  * @param {number} divideNum

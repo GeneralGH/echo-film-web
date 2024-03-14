@@ -1,9 +1,7 @@
+import { Color } from 'tvision-color';
 import * as echarts from 'echarts/core';
 import trim from 'lodash/trim';
-import { Color } from 'tvision-color';
-
 import { TColorToken } from '@/config/color';
-import { ModeType } from '@/types/interface';
 
 /**
  * 依据主题类型获取颜色
@@ -59,7 +57,12 @@ export function changeChartsTheme(chartsList: echarts.EChartsType[]): void {
 /**
  * 根据当前主题色、模式等情景 计算最后生成的色阶
  */
-export function generateColorMap(theme: string, colorPalette: Array<string>, mode: ModeType, brandColorIdx: number) {
+export function generateColorMap(
+  theme: string,
+  colorPalette: Array<string>,
+  mode: 'light' | 'dark',
+  brandColorIdx: number,
+) {
   const isDarkMode = mode === 'dark';
 
   if (isDarkMode) {
@@ -72,7 +75,7 @@ export function generateColorMap(theme: string, colorPalette: Array<string>, mod
     colorPalette[0] = `${colorPalette[brandColorIdx]}20`;
   }
 
-  const colorMap: TColorToken = {
+  const colorMap = {
     '--td-brand-color': colorPalette[brandColorIdx], // 主题色
     '--td-brand-color-1': colorPalette[0], // light
     '--td-brand-color-2': colorPalette[1], // focus
@@ -91,7 +94,7 @@ export function generateColorMap(theme: string, colorPalette: Array<string>, mod
 /**
  * 将生成的样式嵌入头部
  */
-export function insertThemeStylesheet(theme: string, colorMap: TColorToken, mode: ModeType) {
+export function insertThemeStylesheet(theme: string, colorMap: TColorToken, mode: 'light' | 'dark') {
   const isDarkMode = mode === 'dark';
   const root = !isDarkMode ? `:root[theme-color='${theme}']` : `:root[theme-color='${theme}'][theme-mode='dark']`;
 

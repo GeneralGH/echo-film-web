@@ -1,110 +1,122 @@
-import keys from 'lodash/keys';
-import { defineStore } from 'pinia';
+/* eslint-disable no-param-reassign */
 import { Color } from 'tvision-color';
-
-import { DARK_CHART_COLORS, LIGHT_CHART_COLORS, TColorSeries } from '@/config/color';
 import STYLE_CONFIG from '@/config/style';
-import { store } from '@/store';
-import { ModeType } from '@/types/interface';
-import { generateColorMap, insertThemeStylesheet } from '@/utils/color';
+import { TColorSeries, TColorToken, LIGHT_CHART_COLORS, DARK_CHART_COLORS } from '@/config/color';
+import { insertThemeStylesheet, generateColorMap } from '@/utils/color';
 
-const state: Record<string, any> = {
+// 定义的state初始值
+const state = {
   ...STYLE_CONFIG,
   showSettingPanel: false,
-  colorList: {} as TColorSeries,
+  colorList: {},
   chartColors: LIGHT_CHART_COLORS,
 };
 
-export type TState = typeof state;
-export type TStateKey = keyof typeof state;
+type IInitStateType = typeof state;
 
-export const useSettingStore = defineStore('setting', {
-  state: () => state,
-  getters: {
-    showSidebar: (state) => state.layout !== 'top',
-    showSidebarLogo: (state) => state.layout === 'side',
-    showHeaderLogo: (state) => state.layout !== 'side',
-    displayMode: (state): ModeType => {
-      if (state.mode === 'auto') {
-        const media = window.matchMedia('(prefers-color-scheme:dark)');
-        if (media.matches) {
-          return 'dark';
-        }
-        return 'light';
-      }
-      return state.mode as ModeType;
-    },
-    displaySideMode: (state): ModeType => {
-      return state.sideMode as ModeType;
-    },
+export interface IStateType extends IInitStateType {
+  isAsideFooter: boolean;
+  showSettingPanel: boolean;
+}
+
+// 定义的state的初始值方法，传入state或者额外的方法，然后利用 vuex 的双向数据驱动进行值的改变
+// 可通过this.$store.commit(' ')调用，但是触发的是同步事件
+const mutations = {
+  update(state: IStateType, payload: IStateType) {
+    state.showBreadcrumb = payload.showBreadcrumb;
+    state.mode = payload.mode;
+    state.layout = payload.layout;
+    state.isSidebarCompact = payload.isSidebarCompact;
+    state.splitMenu = payload.splitMenu;
+    state.isFooterAside = payload.isFooterAside;
+    state.isSidebarFixed = payload.isSidebarFixed;
+    state.isHeaderFixed = payload.isHeaderFixed;
+    state.showHeader = payload.showHeader;
+    state.showFooter = payload.showFooter;
+    state.backgroundTheme = payload.backgroundTheme;
+    state.brandTheme = payload.brandTheme;
+    state.isUseTabsRouter = payload.isUseTabsRouter;
   },
-  actions: {
-    async changeMode(mode: ModeType | 'auto') {
-      let theme = mode;
+  toggleSidebarCompact(state: IStateType) {
+    state.isSidebarCompact = !state.isSidebarCompact;
+  },
+  toggleUseTabsRouter(state: IStateType) {
+    state.isUseTabsRouter = !state.isUseTabsRouter;
+  },
+  showSidebarCompact(state: IStateType, payload: boolean) {
+    state.isSidebarCompact = payload;
+  },
+  toggleSettingPanel(state: IStateType, payload: boolean) {
+    state.showSettingPanel = payload;
+  },
+  addColor(state: IStateType, payload: TColorSeries) {
+    state.colorList = { ...state.colorList, ...payload };
+  },
+  changeChartColor(state: IStateType, payload: TColorToken) {
+    state.chartColors = { ...payload };
+  },
+};
 
-      if (mode === 'auto') {
-        theme = this.getMediaColor();
-      }
-      const isDarkMode = theme === 'dark';
-
-      document.documentElement.setAttribute('theme-mode', isDarkMode ? 'dark' : '');
-
-      this.chartColors = isDarkMode ? DARK_CHART_COLORS : LIGHT_CHART_COLORS;
-    },
-    async changeSideMode(mode: ModeType) {
-      const isDarkMode = mode === 'dark';
-
-      document.documentElement.setAttribute('side-mode', isDarkMode ? 'dark' : '');
-    },
-    getMediaColor() {
+const getters = {
+  showHeader: (state: IStateType) => state.showHeader,
+  showSidebar: (state: IStateType) => state.layout !== 'top',
+  showSidebarLogo: (state: IStateType) => state.layout === 'side',
+  showHeaderLogo: (state: IStateType) => state.layout !== 'side',
+  showFooter: (state: IStateType) => state.showFooter,
+  isUseTabsRouter: (state: IStateType) => state.isUseTabsRouter,
+  mode: (state: IStateType) => {
+    if (state.mode === 'auto') {
       const media = window.matchMedia('(prefers-color-scheme:dark)');
-
       if (media.matches) {
         return 'dark';
       }
       return 'light';
-    },
-    changeBrandTheme(brandTheme: string) {
-      const mode = this.displayMode;
-      // 以主题色加显示模式作为键
-      const colorKey = `${brandTheme}[${mode}]`;
-      let colorMap = this.colorList[colorKey];
-      // 如果不存在色阶，就需要计算
-      if (colorMap === undefined) {
-        const [{ colors: newPalette, primary: brandColorIndex }] = Color.getColorGradations({
-          colors: [brandTheme],
-          step: 10,
-          remainInput: false, // 是否保留输入 不保留会矫正不合适的主题色
-        });
-        colorMap = generateColorMap(brandTheme, newPalette, mode, brandColorIndex);
-        this.colorList[colorKey] = colorMap;
-      }
-      // TODO 需要解决不停切换时有反复插入 style 的问题
-      insertThemeStylesheet(brandTheme, colorMap, mode);
-      document.documentElement.setAttribute('theme-color', brandTheme);
-    },
-    updateConfig(payload: Partial<TState>) {
-      for (const key in payload) {
-        if (payload[key as TStateKey] !== undefined) {
-          this[key as TStateKey] = payload[key as TStateKey];
-        }
-        if (key === 'mode') {
-          this.changeMode(payload[key] as ModeType);
-        }
-        if (key === 'sideMode') {
-          this.changeSideMode(payload[key] as ModeType);
-        }
-        if (key === 'brandTheme') {
-          this.changeBrandTheme(payload[key]);
-        }
-      }
-    },
+    }
+    return state.mode;
   },
-  persist: {
-    paths: [...keys(STYLE_CONFIG), 'colorList', 'chartColors'],
-  },
-});
+};
 
-export function getSettingStore() {
-  return useSettingStore(store);
-}
+const actions = {
+  changeTheme({ commit, dispatch }, payload: IStateType) {
+    dispatch('changeMode', payload);
+    dispatch('changeBrandTheme', payload);
+    commit('update', payload);
+  },
+  changeMode({ commit }, payload: IStateType) {
+    let theme = payload.mode;
+    if (payload.mode === 'auto') {
+      const media = window.matchMedia('(prefers-color-scheme:dark)');
+      if (media.matches) {
+        theme = 'dark';
+      } else {
+        theme = 'light';
+      }
+    }
+    const isDarkMode = theme === 'dark';
+
+    document.documentElement.setAttribute('theme-mode', isDarkMode ? 'dark' : '');
+
+    commit('changeChartColor', isDarkMode ? DARK_CHART_COLORS : LIGHT_CHART_COLORS);
+  },
+  changeBrandTheme(_: { state: IStateType }, payload: IStateType) {
+    const { brandTheme, mode } = payload;
+    const { colors: newPalette, primary: brandColorIndex } = Color.getColorGradations({
+      colors: [brandTheme],
+      step: 10,
+      remainInput: false, // 是否保留输入 不保留会矫正不合适的主题色
+    })[0];
+    const colorMap = generateColorMap(brandTheme, newPalette, mode as 'light' | 'dark', brandColorIndex);
+
+    insertThemeStylesheet(brandTheme, colorMap, mode as 'light' | 'dark');
+
+    document.documentElement.setAttribute('theme-color', brandTheme);
+  },
+};
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters,
+};

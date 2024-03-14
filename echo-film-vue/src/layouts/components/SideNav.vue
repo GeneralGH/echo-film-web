@@ -1,146 +1,150 @@
 <template>
   <div :class="sideNavCls">
-    <t-menu :class="menuCls" :theme="theme" :value="active" :collapsed="collapsed" :default-expanded="defaultExpanded">
+    <t-menu
+      width="232px"
+      :class="menuCls"
+      :theme="theme"
+      :value="active"
+      :collapsed="collapsed"
+      :defaultExpanded="defaultExpanded"
+    >
       <template #logo>
-        <span v-if="showLogo" :class="`${prefix}-side-nav-logo-wrapper`" @click="goHome">
-          <component :is="getLogo()" :class="logoCls" />
+        <span v-if="showLogo" :class="`${prefix}-side-nav-logo-wrapper`" @click="() => handleNav('/dashboard/base')">
+          <component :is="getLogo" :class="`${prefix}-side-nav-logo-${collapsed ? 't' : 'tdesign'}-logo`" />
         </span>
       </template>
-      <menu-content :nav-data="menu" />
+      <menu-content :navData="menu" />
       <template #operations>
-        <span :class="versionCls"> {{ !collapsed ? 'TDesign Starter' : '' }} {{ pgk.version }} </span>
+        <span class="version-container"> {{ !collapsed ? `TDesign Starter ${pgk.version}` : pgk.version }} </span>
       </template>
     </t-menu>
     <div :class="`${prefix}-side-nav-placeholder${collapsed ? '-hidden' : ''}`"></div>
   </div>
 </template>
 
-<script setup lang="ts">
-import union from 'lodash/union';
-import type { PropType } from 'vue';
-import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-
-import AssetLogoFull from '@/assets/assets-logo-full.svg?component';
-import AssetLogo from '@/assets/assets-t-logo.svg?component';
+<script lang="ts">
+import Vue from 'vue';
 import { prefix } from '@/config/global';
-import { getActive, getRoutesExpanded } from '@/router';
-import { useSettingStore } from '@/store';
-import type { MenuRoute, ModeType } from '@/types/interface';
+import { ClassName } from '@/interface';
+import Logo from '@/assets/assets-t-logo.svg';
+import LogoFull from '@/assets/assets-logo-full.svg';
 
-import pgk from '../../../package.json';
 import MenuContent from './MenuContent.vue';
+import pgk from '../../../package.json';
 
 const MIN_POINT = 992 - 1;
 
-const props = defineProps({
-  menu: {
-    type: Array as PropType<MenuRoute[]>,
-    default: () => [],
+export default Vue.extend({
+  name: 'sideNav',
+  components: {
+    MenuContent,
   },
-  showLogo: {
-    type: Boolean as PropType<boolean>,
-    default: true,
-  },
-  isFixed: {
-    type: Boolean as PropType<boolean>,
-    default: true,
-  },
-  layout: {
-    type: String as PropType<string>,
-    default: '',
-  },
-  headerHeight: {
-    type: String as PropType<string>,
-    default: '64px',
-  },
-  theme: {
-    type: String as PropType<ModeType>,
-    default: 'light',
-  },
-  isCompact: {
-    type: Boolean as PropType<boolean>,
-    default: false,
-  },
-});
-
-const collapsed = computed(() => useSettingStore().isSidebarCompact);
-
-const active = computed(() => getActive());
-
-const defaultExpanded = computed(() => {
-  const path = getActive();
-  const parentPath = path.substring(0, path.lastIndexOf('/'));
-  const expanded = getRoutesExpanded();
-  return union(expanded, parentPath === '' ? [] : [parentPath]);
-});
-
-const sideMode = computed(() => {
-  const { theme } = props;
-  return theme === 'dark';
-});
-const sideNavCls = computed(() => {
-  const { isCompact } = props;
-  return [
-    `${prefix}-sidebar-layout`,
-    {
-      [`${prefix}-sidebar-compact`]: isCompact,
+  props: {
+    menu: Array,
+    showLogo: {
+      type: Boolean,
+      default: true,
     },
-  ];
-});
-const logoCls = computed(() => {
-  return [
-    `${prefix}-side-nav-logo-${collapsed.value ? 't' : 'tdesign'}-logo`,
-    {
-      [`${prefix}-side-nav-dark`]: sideMode.value,
+    isFixed: {
+      type: Boolean,
+      default: true,
     },
-  ];
-});
-const versionCls = computed(() => {
-  return [
-    `version-container`,
-    {
-      [`${prefix}-side-nav-dark`]: sideMode.value,
+    layout: String,
+    headerHeight: {
+      type: String,
+      default: '56px',
     },
-  ];
-});
-const menuCls = computed(() => {
-  const { showLogo, isFixed, layout } = props;
-  return [
-    `${prefix}-side-nav`,
-    {
-      [`${prefix}-side-nav-no-logo`]: !showLogo,
-      [`${prefix}-side-nav-no-fixed`]: !isFixed,
-      [`${prefix}-side-nav-mix-fixed`]: layout === 'mix' && isFixed,
+    theme: {
+      type: String,
+      default: 'light',
     },
-  ];
+    isCompact: {
+      type: Boolean,
+      default: false,
+    },
+    maxLevel: {
+      type: Number,
+      default: 3,
+    },
+  },
+  data() {
+    return {
+      prefix,
+      pgk,
+    };
+  },
+  computed: {
+    defaultExpanded() {
+      const path = this.active;
+      const parentPath = path.substring(0, path.lastIndexOf('/'));
+      if (parentPath.lastIndexOf('/')) {
+        const threeLevel = parentPath.substring(0, parentPath.lastIndexOf('/'));
+        return threeLevel === '' ? [] : [threeLevel, parentPath];
+      }
+      return parentPath === '' ? [] : [parentPath];
+    },
+    iconName(): string {
+      return this.$store.state.setting.isSidebarCompact ? 'menu-fold' : 'menu-unfold';
+    },
+    collapsed(): boolean {
+      return this.$store.state.setting.isSidebarCompact;
+    },
+    sideNavCls(): Array<ClassName> {
+      return [
+        `${this.prefix}-sidebar-layout`,
+        {
+          [`${this.prefix}-sidebar-compact`]: this.isCompact,
+        },
+      ];
+    },
+    menuCls(): Array<ClassName> {
+      return [
+        `${this.prefix}-side-nav`,
+        {
+          [`${this.prefix}-side-nav-no-logo`]: !this.showLogo,
+          [`${this.prefix}-side-nav-no-fixed`]: !this.isFixed,
+          [`${this.prefix}-side-nav-mix-fixed`]: this.layout === 'mix' && this.isFixed,
+        },
+      ];
+    },
+    layoutCls(): Array<ClassName> {
+      return [`${this.prefix}-side-nav-${this.layout}`, `${this.prefix}-sidebar-layout`];
+    },
+    active(): string {
+      if (!this.$route.path) {
+        return '';
+      }
+      return this.$route.path
+        .split('/')
+        .filter((_item: string, index: number) => index <= this.maxLevel && index > 0)
+        .map((item: string) => `/${item}`)
+        .join('');
+    },
+    getLogo() {
+      if (this.collapsed) {
+        return Logo;
+      }
+      return LogoFull;
+    },
+  },
+  mounted() {
+    this.autoCollapsed();
+
+    window.onresize = () => {
+      this.autoCollapsed();
+    };
+  },
+  methods: {
+    changeCollapsed(): void {
+      this.$store.commit('setting/toggleSidebarCompact');
+    },
+    autoCollapsed(): void {
+      const isCompact = window.innerWidth <= MIN_POINT;
+      this.$store.commit('setting/showSidebarCompact', isCompact);
+    },
+    handleNav(url: string) {
+      this.$router.push(url);
+    },
+  },
 });
-
-const router = useRouter();
-const settingStore = useSettingStore();
-
-const autoCollapsed = () => {
-  const isCompact = window.innerWidth <= MIN_POINT;
-  settingStore.updateConfig({
-    isSidebarCompact: isCompact,
-  });
-};
-
-onMounted(() => {
-  autoCollapsed();
-  window.onresize = () => {
-    autoCollapsed();
-  };
-});
-
-const goHome = () => {
-  router.push('/dashboard/base');
-};
-
-const getLogo = () => {
-  if (collapsed.value) return AssetLogo;
-  return AssetLogoFull;
-};
 </script>
-
-<style lang="less" scoped></style>

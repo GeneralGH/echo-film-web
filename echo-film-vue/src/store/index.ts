@@ -1,15 +1,22 @@
-import { createPinia } from 'pinia';
-import { createPersistedState } from 'pinia-plugin-persistedstate';
+import Vue from 'vue';
+import Vuex from 'vuex';
+import user from './modules/user';
+import notification from './modules/notification';
+import setting from './modules/setting';
+import permission from './modules/permission';
+import tabRouter from './modules/tab-router'; // 多标签管理
 
-const store = createPinia();
-store.use(createPersistedState());
+Vue.use(Vuex);
 
-export { store };
-
-export * from './modules/notification';
-export * from './modules/permission';
-export * from './modules/setting';
-export * from './modules/tabs-router';
-export * from './modules/user';
+const store = new Vuex.Store({
+  strict: import.meta.env.MODE === 'release',
+  modules: {
+    user,
+    setting,
+    notification,
+    permission,
+    tabRouter,
+  },
+});
 
 export default store;

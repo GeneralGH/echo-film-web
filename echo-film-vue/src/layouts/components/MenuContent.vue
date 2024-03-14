@@ -1,81 +1,63 @@
 <template>
   <div>
-    <template v-for="item in list" :key="item.path">
+    <template v-for="item in list">
       <template v-if="!item.children || !item.children.length || item.meta?.single">
-        <t-menu-item v-if="getHref(item)" :name="item.path" :value="getPath(item)" @click="openHref(getHref(item)[0])">
+        <t-menu-item
+          v-if="getHref(item)"
+          :key="`href${item.path}`"
+          :href="getHref(item)?.[0]"
+          :name="item.path"
+          :value="item.meta?.single ? item.redirect || item.path : item.path"
+        >
           <template #icon>
-            <component :is="menuIcon(item)" class="t-icon"></component>
+            <t-icon v-if="typeof item.icon === 'string' && item.icon" :name="item.icon" />
+            <renderFnIcon :item="item" />
           </template>
-          {{ renderMenuTitle(item.title) }}
+          {{ item.title }}
         </t-menu-item>
-        <t-menu-item v-else :name="item.path" :value="getPath(item)" :to="item.path">
+        <t-menu-item
+          v-else
+          :key="`${item.path}`"
+          :to="item.path"
+          :name="item.path"
+          :value="item.meta?.single ? item.redirect || item.path : item.path"
+        >
           <template #icon>
-            <component :is="menuIcon(item)" class="t-icon"></component>
+            <t-icon v-if="typeof item.icon === 'string' && item.icon" :name="item.icon" />
+            <renderFnIcon :item="item" />
           </template>
-          {{ renderMenuTitle(item.title) }}
+          {{ item.title }}
         </t-menu-item>
       </template>
-      <t-submenu v-else :name="item.path" :value="item.path" :title="renderMenuTitle(item.title)">
+      <t-submenu v-else :name="item.path" :value="item.path" :title="item.title" :key="item.path">
         <template #icon>
-          <component :is="menuIcon(item)" class="t-icon"></component>
+          <t-icon v-if="typeof item.icon === 'string' && item.icon" :name="item.icon" />
+          <renderFnIcon :item="item" />
         </template>
         <menu-content v-if="item.children" :nav-data="item.children" />
       </t-submenu>
     </template>
   </div>
 </template>
-<script setup lang="tsx">
-import type { PropType } from 'vue';
-import { computed } from 'vue';
 
-import { useLocale } from '@/locales/useLocale';
-import { getActive } from '@/router';
-import type { MenuRoute } from '@/types/interface';
+<script lang="ts">
+import Vue, { PropType } from 'vue';
 
-type ListItemType = MenuRoute & { icon?: string };
+import { prefix } from '@/config/global';
+import { MenuRoute } from '@/interface';
 
-const props = defineProps({
-  navData: {
-    type: Array as PropType<MenuRoute[]>,
-    default: () => [],
-  },
-});
-
-const active = computed(() => getActive());
-
-const { locale } = useLocale();
-const list = computed(() => {
-  const { navData } = props;
-  return getMenuList(navData);
-});
-
-const menuIcon = (item: ListItemType) => {
-  if (typeof item.icon === 'string') return <t-icon name={item.icon} />;
-  const RenderIcon = item.icon;
-  return RenderIcon;
-};
-
-const renderMenuTitle = (title: string | Record<string, string>) => {
-  if (typeof title === 'string') return title;
-  return title[locale.value];
-};
-
-const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
-  if (!list || list.length === 0) {
+const getMenuList = (list: MenuRoute[], basePath?: string): MenuRoute[] => {
+  if (!list) {
     return [];
   }
-  // 如果meta中有orderNo则按照从小到大排序
-  list.sort((a, b) => {
-    return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
-  });
+
   return list
     .map((item) => {
       const path = basePath && !item.path.includes(basePath) ? `${basePath}/${item.path}` : item.path;
-
       return {
         path,
         title: item.meta?.title,
-        icon: item.meta?.icon,
+        icon: item.meta?.icon || '',
         children: getMenuList(item.children, path),
         meta: item.meta,
         redirect: item.redirect,
@@ -84,29 +66,43 @@ const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
     .filter((item) => item.meta && item.meta.hidden !== true);
 };
 
-const getHref = (item: MenuRoute) => {
-  const { frameSrc, frameBlank } = item.meta;
-  if (frameSrc && frameBlank) {
-    return frameSrc.match(/(http|https):\/\/([\w.]+\/?)\S*/);
-  }
-  return null;
-};
+Vue.component('renderFnIcon', {
+  props: {
+    item: {
+      type: Object as PropType<MenuRoute>,
+      required: true,
+    },
+  },
+  // 遵循最小改动的原则，这里仍然使用 createElement
+  render(createElement) {
+    if (typeof this.item.icon === 'function' || (this.item.icon && typeof this.item.icon.render === 'function')) {
+      return createElement(this.item.icon, {
+        class: 't-icon',
+      });
+    }
+    return undefined;
+  },
+});
 
-const getPath = (item: ListItemType) => {
-  const activeLevel = active.value.split('/').length;
-  const pathLevel = item.path.split('/').length;
-  if (activeLevel > pathLevel && active.value.startsWith(item.path)) {
-    return active.value;
-  }
-
-  if (active.value === item.path) {
-    return active.value;
-  }
-
-  return item.meta?.single ? item.redirect : item.path;
-};
-
-const openHref = (url: string) => {
-  window.open(url);
-};
+export default Vue.extend({
+  name: 'MenuContent',
+  props: {
+    navData: Array,
+  },
+  data() {
+    return {
+      prefix,
+    };
+  },
+  computed: {
+    list(): Array<MenuRoute> {
+      return getMenuList(this.navData);
+    },
+  },
+  methods: {
+    getHref(item: MenuRoute) {
+      return item.path.match(/(http|https):\/\/([\w.]+\/?)\S*/);
+    },
+  },
+});
 </script>

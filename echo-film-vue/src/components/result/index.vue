@@ -8,43 +8,61 @@
     <slot />
   </div>
 </template>
-<script setup lang="ts">
-import { computed } from 'vue';
+<script lang="ts">
+import Vue from 'vue';
 
-import Result403Icon from '@/assets/assets-result-403.svg?component';
-import Result404Icon from '@/assets/assets-result-404.svg?component';
-import Result500Icon from '@/assets/assets-result-500.svg?component';
-import ResultIeIcon from '@/assets/assets-result-ie.svg?component';
-import ResultMaintenanceIcon from '@/assets/assets-result-maintenance.svg?component';
-import ResultWifiIcon from '@/assets/assets-result-wifi.svg?component';
+import Result403Icon from '@/assets/assets-result-403.svg';
+import Result404Icon from '@/assets/assets-result-404.svg';
+import Result500Icon from '@/assets/assets-result-500.svg';
+import ResultIeIcon from '@/assets/assets-result-ie.svg';
+import ResultWifiIcon from '@/assets/assets-result-wifi.svg';
+import ResultMaintenanceIcon from '@/assets/assets-result-maintenance.svg';
 
-const props = defineProps({
-  bgUrl: String,
-  title: String,
-  tip: String,
-  type: String,
-});
-
-const dynamicComponent = computed(() => {
-  switch (props.type) {
-    case '403':
-      return Result403Icon;
-    case '404':
-      return Result404Icon;
-    case '500':
-      return Result500Icon;
-    case 'ie':
-      return ResultIeIcon;
-    case 'wifi':
-      return ResultWifiIcon;
-    case 'maintenance':
-      return ResultMaintenanceIcon;
-    default:
-      return Result403Icon;
-  }
+export default Vue.extend({
+  name: 'Result',
+  props: {
+    bgUrl: {
+      type: String,
+      default: '',
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    tip: {
+      type: String,
+      default: '',
+    },
+    type: {
+      type: String,
+      default: '',
+    },
+  },
+  computed: {
+    dynamicComponent() {
+      switch (this.type) {
+      case '403':
+        return Result403Icon;
+      case '404':
+        return Result404Icon;
+      case '500':
+        return Result500Icon;
+      case 'ie':
+        return ResultIeIcon;
+      case 'wifi':
+        return ResultWifiIcon;
+      case 'maintenance':
+        return ResultMaintenanceIcon;
+      default:
+        return Result403Icon;
+      }
+    },
+  },
 });
 </script>
 <style lang="less" scoped>
+@import '@/style/variables';
+
 .result {
   &-link {
     color: var(--td-brand-color);
@@ -75,6 +93,7 @@ const dynamicComponent = computed(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 24px;
   }
 
   &-bg-img {
@@ -83,14 +102,15 @@ const dynamicComponent = computed(() => {
   }
 
   &-title {
-    font: var(--td-font-title-large);
-    font-style: normal;
-    margin-top: var(--td-comp-margin-l);
     color: var(--td-text-color-primary);
+    font: var(--td-font-title-large);
+    font-weight: 500;
+    font-style: normal;
+    margin-top: 8px;
   }
 
   &-tip {
-    margin: var(--td-comp-margin-s) 0 var(--td-comp-margin-xxxl);
+    margin: 8px 0 32px;
     font: var(--td-font-body-medium);
     color: var(--td-text-color-secondary);
   }

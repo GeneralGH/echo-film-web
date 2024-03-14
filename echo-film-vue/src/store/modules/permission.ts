@@ -1,53 +1,66 @@
-import { defineStore } from 'pinia';
-import { RouteRecordRaw } from 'vue-router';
+import { resetRouter, asyncRouterList } from '@/router';
 
-import { RouteItem } from '@/api/model/permissionModel';
-import { getMenuList } from '@/api/permission';
-import router, { fixedRouterList, homepageRouterList } from '@/router';
-import { store } from '@/store';
-import { transformObjectToRoute } from '@/utils/route';
-
-export const usePermissionStore = defineStore('permission', {
-  state: () => ({
-    whiteListRouters: ['/login'],
-    routers: [],
-    removeRoutes: [],
-    asyncRoutes: [],
-  }),
-  actions: {
-    async initRoutes() {
-      const accessedRouters = this.asyncRoutes;
-
-      // 在菜单展示全部路由
-      this.routers = [...homepageRouterList, ...accessedRouters, ...fixedRouterList];
-      // 在菜单只展示动态路由和首页
-      // this.routers = [...homepageRouterList, ...accessedRouters];
-      // 在菜单只展示动态路由
-      // this.routers = [...accessedRouters];
-    },
-    async buildAsyncRoutes() {
-      try {
-        // 发起菜单权限请求 获取菜单列表
-        const asyncRoutes: Array<RouteItem> = (await getMenuList()).list;
-        this.asyncRoutes = transformObjectToRoute(asyncRoutes);
-        await this.initRoutes();
-        return this.asyncRoutes;
-      } catch (error) {
-        throw new Error("Can't build routes");
+function filterPermissionsRouters(routes, roles) {
+  const res = [];
+  routes.forEach((route) => {
+    const children = [];
+    route.children?.forEach((childRouter) => {
+      const roleCode = childRouter.meta?.roleCode || childRouter.name;
+      if (roles.indexOf(roleCode) !== -1) {
+        children.push(childRouter);
       }
-    },
-    async restoreRoutes() {
-      // 不需要在此额外调用initRoutes更新侧边导肮内容，在登录后asyncRoutes为空会调用
-      this.asyncRoutes.forEach((item: RouteRecordRaw) => {
-        if (item.name) {
-          router.removeRoute(item.name);
-        }
-      });
-      this.asyncRoutes = [];
-    },
-  },
-});
-
-export function getPermissionStore() {
-  return usePermissionStore(store);
+    });
+    if (children.length > 0) {
+      route.children = children;
+      res.push(route);
+    }
+  });
+  return res;
 }
+
+const state = {
+  whiteListRouters: ['/login'],
+  routers: [],
+};
+
+const mutations = {
+  setRouters: (state, routers) => {
+    state.routers = routers;
+  },
+};
+
+const getters = {
+  routers: (state) => state.routers,
+  whiteListRouters: (state) => state.whiteListRouters,
+};
+
+const actions = {
+  async initRoutes({ commit }, roles) {
+    let accessedRouters;
+
+    // special token
+    if (roles.includes('ALL_ROUTERS')) {
+      accessedRouters = asyncRouterList;
+    } else {
+      accessedRouters = filterPermissionsRouters(asyncRouterList, roles);
+    }
+
+    commit('setRouters', accessedRouters);
+
+    // register routers
+    // router.addRoutes(state.routers);
+  },
+  async restore({ commit }) {
+    // remove routers
+    resetRouter();
+    commit('setRouters', []);
+  },
+};
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters,
+};
