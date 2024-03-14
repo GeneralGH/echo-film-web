@@ -4,6 +4,8 @@ import com.yiyu.echofilmspringboot.common.Result;
 import com.yiyu.echofilmspringboot.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户 服务类
@@ -15,4 +17,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IUserService extends IService<User> {
 
     Result addUser(User user);
+
+    Result updateUsr(User user);
+
+    Result delUser(Long id);
+
+    Result<List<User>> getUserList(int pageNum, int pageSize, String name);
+
+    Result login(User user);
 }

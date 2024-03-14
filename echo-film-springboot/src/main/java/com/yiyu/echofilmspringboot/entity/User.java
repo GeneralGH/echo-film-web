@@ -30,7 +30,7 @@ public class User implements Serializable {
     @ApiModelProperty("账号")
     private String userAccount;
 
-    @ApiModelProperty("密码")
+    @ApiModelProperty("密码-默认123456")
     private String userPassword;
 
     @ApiModelProperty("昵称")

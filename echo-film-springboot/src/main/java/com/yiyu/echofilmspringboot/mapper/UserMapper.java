@@ -3,6 +3,7 @@ package com.yiyu.echofilmspringboot.mapper;
 import com.yiyu.echofilmspringboot.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -14,5 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-
+    User getUserByAccount(@Param("userAccount") String userAccount);
 }
