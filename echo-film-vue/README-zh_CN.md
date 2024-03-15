@@ -108,7 +108,7 @@ npm run stylelint:fix
 ### 社区版本
 
 基于 TDesign Vue 的 starter-kit 有多种社区版本，访问 [社区链接](https://tdesign.tencent.com/starter/docs/vue/community-link) 可以访问更多版本。 
-如果您也开发了 TDesign Starter 的社区版本，可以提交 Issue 或者直接给我们提Pull Request 😊。
+如果您也开发了 回声影视 的社区版本，可以提交 Issue 或者直接给我们提Pull Request 😊。
 
 ### 开源协议
 

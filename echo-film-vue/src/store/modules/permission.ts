@@ -39,11 +39,11 @@ const actions = {
     let accessedRouters;
 
     // special token
-    if (roles.includes('ALL_ROUTERS')) {
+    /* if (roles.includes('ALL_ROUTERS')) { */
       accessedRouters = asyncRouterList;
-    } else {
+    /* } else {
       accessedRouters = filterPermissionsRouters(asyncRouterList, roles);
-    }
+    } */
 
     commit('setRouters', accessedRouters);
 

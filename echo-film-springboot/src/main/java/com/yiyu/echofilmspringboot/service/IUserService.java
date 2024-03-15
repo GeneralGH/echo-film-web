@@ -22,7 +22,7 @@ public interface IUserService extends IService<User> {
 
     Result delUser(Long id);
 
-    Result<List<User>> getUserList(int pageNum, int pageSize, String name);
+    Result getUserList(int pageNum, int pageSize, String name);
 
     Result login(User user);
 }

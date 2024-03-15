@@ -2,6 +2,7 @@ package com.yiyu.echofilmspringboot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yiyu.echofilmspringboot.common.Result;
 import com.yiyu.echofilmspringboot.entity.Film;
 import com.yiyu.echofilmspringboot.entity.User;
@@ -28,7 +29,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result addUser(User user) {
-        user.setUserPassword("123456");
+        // 根据userAccount字段查询是否已经存在在数据库中
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_account", user.getUserAccount());
+        User existingUser = userMapper.selectOne(queryWrapper);
+        if (existingUser != null) {
+            return Result.error("该用户已存在");
+        }
         int insert = userMapper.insert(user);
         if (insert <= 0) {
             return Result.error("新增失败");
@@ -55,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Result<List<User>> getUserList(int pageNum, int pageSize, String name) {
+    public Result getUserList(int pageNum, int pageSize, String name) {
         // 设置分页参数
         PageHelper.startPage(pageNum, pageSize);
         // 构建查询条件
@@ -65,8 +72,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         // 执行分页查询
         List<User> users = userMapper.selectList(queryWrapper);
+        // 获取分页信息
+        PageInfo<User> pageInfo = new PageInfo<>(users);
         // 返回Result对象
-        return Result.success(users);
+        return Result.success(pageInfo);
     }
 
     @Override

@@ -29,7 +29,7 @@
               <template #icon>
                 <user-circle-icon class="header-user-avatar" />
               </template>
-              <div class="header-user-account">Tencent</div>
+              <div class="header-user-account">{{ userInfo.userName }}</div>
               <template #suffix>
                 <chevron-down-icon />
               </template>
@@ -109,6 +109,7 @@ export default Vue.extend({
       prefix,
       visibleNotice: false,
       isSearchFocus: false,
+      userInfo: JSON.parse(localStorage.getItem('userInfo'))
     };
   },
   computed: {

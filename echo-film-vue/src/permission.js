@@ -11,27 +11,27 @@ const whiteListRouters = store.getters['permission/whiteListRouters'];
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
 
-  const token = store.getters['user/token'];
+  const token = localStorage.getItem('userInfo');
 
   if (token) {
     if (to.path === '/login') {
       setTimeout(() => {
         store.dispatch('user/logout');
-        store.dispatch('permission/restore');
+        localStorage.clear('userInfo')
+        /* store.dispatch('permission/restore'); */
       });
       next();
       return;
     }
 
     const roles = store.getters['user/roles'];
-
     if (roles && roles.length > 0) {
       next();
     } else {
       try {
         await store.dispatch('user/getUserInfo');
 
-        await store.dispatch('permission/initRoutes', store.getters['user/roles']);
+        await store.dispatch('permission/initRoutes');
 
         next({ ...to });
       } catch (error) {

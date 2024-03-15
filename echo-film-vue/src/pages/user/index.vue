@@ -1,7 +1,41 @@
 <!--  -->
 <template>
   <div>
-    <t-card :bordered="false">
+    <t-card :bordered="false" title="用户管理">
+      <t-row justify="space-between">
+        <t-col>
+          <t-space>
+            <t-form layout="inline" colon labelAlign="left" :labelWidth="50">
+              <t-form-item label="名称">
+                <t-input placeholder="请输入内容" v-model="listQuery.name" clearable style="width: 240px;" />
+              </t-form-item>
+            </t-form>
+
+            <t-button @click="getList">查询</t-button>
+          </t-space>
+        </t-col>
+        <t-col>
+          <t-button theme="warning" @click="addOrUpdate()">新增</t-button>
+        </t-col>
+      </t-row>
+
+      <div style="margin-top: 50px;">
+        <t-table :pagination="null" bordered hover stripe tableLayout="auto" row-key="index" :data="data"
+          :columns="columns" style="margin-bottom: 50px;">
+          <template #actions="{ row }">
+            <t-space>
+              <t-button @click="addOrUpdate(row)" size="small">编辑</t-button>
+              <t-popconfirm theme="danger" :visible="row.delShow" content="确认删除吗" @cancel="row.delShow = false" @confirm="delConfirm(row)">
+                <t-button theme="danger" size="small" @click="row.delShow = true">删除</t-button>
+              </t-popconfirm>
+            </t-space>
+          </template>
+        </t-table>
+        <t-pagination :total="totalCount" :current="listQuery.pageNum" :pageSize="listQuery.pageSize" showJumper
+          showPageNumber showPageSize showPreviousAndNextBtn totalContent @change="pageChange" />
+      </div>
+
+      <AddOrUpdate ref="addOrUpdate" :actionType="actionType" :editObj="editObj" @reList="getList" />
     </t-card>
   </div>
 </template>
@@ -9,13 +43,31 @@
 <script>
 // 这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 // 例如：import 《组件名称》 from '《组件路径》';
+import UserApi from '@/api/user'
+import AddOrUpdate from './addOrUpdate.vue'
 
 export default {
   // import引入的组件需要注入到对象中才能使用
-  components: {},
+  components: { AddOrUpdate },
   data() {
     // 这里存放数据
     return {
+      listQuery: {
+        pageNum: 1,
+        pageSize: 10,
+        name: ''
+      },
+      data: [],
+      totalCount: 0,
+      columns: [
+        { colKey: 'userAccount', title: '账号', align: 'center' },
+        { colKey: 'userName', title: '昵称', align: 'center' },
+        { colKey: 'userPassword', title: '密码', align: 'center' },
+        { colKey: 'collect', title: '收藏', align: 'center' },
+        { cell: 'actions', title: '操作', align: 'center' }
+      ],
+      actionType: 1,   // 1 新增，2 编辑
+      editObj: {}
     };
   },
   // 监听属性 类似于data概念
@@ -24,6 +76,7 @@ export default {
   watch: {},
   // 生命周期 - 创建完成（可以访问当前this实例）
   created() {
+    this.getList()
   },
   // 生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
@@ -38,6 +91,39 @@ export default {
   activated() { },
   // 方法集合
   methods: {
+    getList() {
+      this.$request.post(UserApi.getUserListUrl, this.listQuery)
+        .then(res => {
+          this.data = res.data.data.list.map((item) => { return { ...item, delShow: false } })
+          this.totalCount = res.data.data.total
+        })
+    },
+
+    pageChange(e) {
+      this.listQuery.pageNum = e.current
+      this.listQuery.pageSize = e.pageSize
+      this.getList()
+    },
+
+    addOrUpdate(row) {
+      if (row) {
+        const { collect, ...rest } = row;
+        this.editObj = rest;
+        this.actionType = 2
+      } else {
+        this.actionType = 1
+      }
+      this.$refs.addOrUpdate.show = true
+    },
+
+    delConfirm(row) {
+      this.$request.delete(UserApi.delUserUrl + row.userId)
+      .then(res => {
+        this.$message.success('删除成功')
+        row.delShow = false
+        this.getList()
+      })
+    }
   },
 }
 </script>
