@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/file")
 public class FileUploadController {
-    private String Path = "uploads/";
+    private String Path = "E:\\workSpace\\echo-film-web\\films\\";
     private String IP = "http://localhost:8090";
 
     /**
@@ -28,7 +28,7 @@ public class FileUploadController {
     @PostMapping("/upload")
     public Result<Map> fileUpload(MultipartFile file) throws IOException {
         //下载接口路径
-        String download = "/file/download/";
+        String download = "/api/file/download/";
 
         String originalFilename = file.getOriginalFilename(); //文件原始全名
 

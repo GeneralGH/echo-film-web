@@ -28,7 +28,7 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
     FilmMapper filmMapper;
 
     @Override
-    public Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType) {
+    public Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend) {
         // 设置分页参数
         PageHelper.startPage(pageNum, pageSize);
         // 构建查询条件
@@ -38,6 +38,9 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
         }
         if (filmType != null && !filmType.isEmpty()) {
             queryWrapper.like("type_ids", "%" + filmType + "%");
+        }
+        if (isRecommend != null && !isRecommend.isEmpty()) {
+            queryWrapper.like("is_recommend", isRecommend);
         }
         // 执行分页查询
         List<Film> films = filmMapper.selectList(queryWrapper);

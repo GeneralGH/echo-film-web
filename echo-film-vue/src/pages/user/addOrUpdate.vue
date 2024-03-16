@@ -3,13 +3,13 @@
     <t-dialog closeOnEscKeydown destroyOnClose :footer="false" header :visible.sync="show" @close="close" :width="850">
         <t-form :data="formData" :rules="rules" ref="form" @submit="onSubmit" colon>
             <t-form-item label="账号" name="userAccount">
-                <t-input v-model="formData.userAccount" placeholder="请输入账号"></t-input>
+                <t-input v-model="formData.userAccount" placeholder="请输入账号" clearable></t-input>
             </t-form-item>
             <t-form-item label="密码" name="userPassword">
-                <t-input v-model="formData.userPassword" placeholder="请输入密码"></t-input>
+                <t-input v-model="formData.userPassword" placeholder="请输入密码" clearable></t-input>
             </t-form-item>
             <t-form-item label="昵称" name="userName">
-                <t-input v-model="formData.userName" placeholder="请输入昵称"></t-input>
+                <t-input v-model="formData.userName" placeholder="请输入昵称" clearable></t-input>
             </t-form-item>
 
             <t-form-item style="margin-left: 100px">

@@ -12,4 +12,7 @@ public class FilmListRequest extends PageRequest {
 
     @ApiModelProperty(value = "影视类型（可选）字符串形式，数字用,隔开")
     private String filmType;
+
+    @ApiModelProperty(value = "是否推荐 1推荐 2不推荐")
+    private String isRecommend;
 }

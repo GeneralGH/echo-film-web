@@ -3,7 +3,7 @@
     <t-dialog closeOnEscKeydown destroyOnClose :footer="false" header :visible.sync="show" @close="close" :width="850">
         <t-form :data="formData" :rules="rules" ref="form" @submit="onSubmit" colon>
             <t-form-item label="类型名称" name="name">
-                <t-input v-model="formData.name" placeholder="请输入类型名称"></t-input>
+                <t-input v-model="formData.name" placeholder="请输入类型名称" clearable></t-input>
             </t-form-item>
 
             <t-form-item style="margin-left: 100px">

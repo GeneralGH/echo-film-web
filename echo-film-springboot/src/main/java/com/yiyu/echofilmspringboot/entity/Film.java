@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -56,7 +58,7 @@ public class Film implements Serializable {
     private String actor;
 
     @ApiModelProperty("上映时间")
-    private LocalDateTime releaseTime;
+    private Date releaseTime;
 
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface IFilmService extends IService<Film> {
 
-    Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType);
+    Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend);
 
     Result addFilm(Film film);
 

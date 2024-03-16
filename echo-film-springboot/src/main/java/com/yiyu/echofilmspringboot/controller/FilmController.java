@@ -36,7 +36,8 @@ public class FilmController {
         int pageSize = request.getPageSize();
         String name = request.getName();
         String filmType = request.getFilmType();
-        return filmService.getFilmsList(pageNum, pageSize, name, filmType);
+        String isRecommend = request.getIsRecommend();
+        return filmService.getFilmsList(pageNum, pageSize, name, filmType, isRecommend);
     }
 
     @ApiOperation("新增影视")
