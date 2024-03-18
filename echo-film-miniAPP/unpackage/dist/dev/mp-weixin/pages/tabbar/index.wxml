@@ -1,0 +1,1 @@
+<view><u-button vue-id="177b07ec-1" type="primary" text="确定" bind:__l="__l"></u-button></view>
