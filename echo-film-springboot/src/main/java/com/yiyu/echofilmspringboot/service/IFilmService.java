@@ -17,11 +17,13 @@ import java.util.List;
  */
 public interface IFilmService extends IService<Film> {
 
-    Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend);
+    Result getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend);
 
     Result addFilm(Film film);
 
     Result updateFilm(Film film);
 
     Result delFilm(Long id);
+
+    Result getRecommendFilms();
 }

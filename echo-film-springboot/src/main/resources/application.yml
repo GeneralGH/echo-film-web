@@ -7,6 +7,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
 
 server:
   port: 8090

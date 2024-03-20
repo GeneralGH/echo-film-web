@@ -8,3 +8,10 @@ export const getFilmList = (data)=> {
 		data
 	})
 };
+
+export const getRecommendFilmList = ()=> {
+	return request({
+		url:'/api/film/getRecommendFilms',
+		method: 'get'
+	})
+};

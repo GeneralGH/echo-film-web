@@ -16,4 +16,7 @@
 <style lang="scss">
 	@import "@/uni_modules/uview-ui/index.scss";
 	/*每个页面公共css */
+	.pageBG {
+		background-color: #F7F7F7;
+	}
 </style>

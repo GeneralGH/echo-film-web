@@ -31,13 +31,19 @@ public class FilmController {
 
     @ApiOperation("分页查询影视列表")
     @PostMapping("/getFilmList")
-    public Result<List<Film>> getFilmList(@RequestBody FilmListRequest request) {
+    public Result getFilmList(@RequestBody FilmListRequest request) {
         int pageNum = request.getPageNum();
         int pageSize = request.getPageSize();
         String name = request.getName();
         String filmType = request.getFilmType();
         String isRecommend = request.getIsRecommend();
         return filmService.getFilmsList(pageNum, pageSize, name, filmType, isRecommend);
+    }
+
+    @ApiOperation("获取推荐影片")
+    @GetMapping("/getRecommendFilms")
+    public Result getRecommendFilms() {
+        return filmService.getRecommendFilms();
     }
 
     @ApiOperation("新增影视")

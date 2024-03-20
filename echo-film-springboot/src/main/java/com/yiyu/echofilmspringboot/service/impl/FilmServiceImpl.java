@@ -3,6 +3,7 @@ package com.yiyu.echofilmspringboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yiyu.echofilmspringboot.common.CommonPage;
 import com.yiyu.echofilmspringboot.common.Result;
 import com.yiyu.echofilmspringboot.entity.Film;
 import com.yiyu.echofilmspringboot.entity.Filmtype;
@@ -28,7 +29,7 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
     FilmMapper filmMapper;
 
     @Override
-    public Result<List<Film>> getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend) {
+    public Result getFilmsList(int pageNum, int pageSize, String name, String filmType, String isRecommend) {
         // 设置分页参数
         PageHelper.startPage(pageNum, pageSize);
         // 构建查询条件
@@ -45,7 +46,7 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
         // 执行分页查询
         List<Film> films = filmMapper.selectList(queryWrapper);
         // 返回Result对象
-        return Result.success(films);
+        return Result.success(CommonPage.restPage(films));
     }
 
     @Override
@@ -73,5 +74,13 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
             filmMapper.deleteById(id);
         }
         return Result.success();
+    }
+
+    @Override
+    public Result getRecommendFilms() {
+        QueryWrapper<Film> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("is_recommend", 1);
+        List<Film> films = filmMapper.selectList(queryWrapper);
+        return Result.success(films);
     }
 }
