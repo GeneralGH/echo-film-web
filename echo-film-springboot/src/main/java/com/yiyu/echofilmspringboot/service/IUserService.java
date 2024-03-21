@@ -25,4 +25,6 @@ public interface IUserService extends IService<User> {
     Result getUserList(int pageNum, int pageSize, String name);
 
     Result login(User user);
+
+    Result updatePassword(User user);
 }

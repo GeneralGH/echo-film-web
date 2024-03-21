@@ -83,4 +83,17 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
         List<Film> films = filmMapper.selectList(queryWrapper);
         return Result.success(films);
     }
+
+    @Override
+    public Result addWatch(Long id) {
+        Film film = filmMapper.selectById(id);
+        Integer watchNumber = film.getWatchNumber();
+        if (watchNumber == null) {
+            watchNumber = 0;
+        }
+        watchNumber += 1;
+        film.setWatchNumber(watchNumber);
+        filmMapper.updateById(film);
+        return Result.success("成功");
+    }
 }

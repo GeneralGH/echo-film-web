@@ -26,4 +26,6 @@ public interface IFilmService extends IService<Film> {
     Result delFilm(Long id);
 
     Result getRecommendFilms();
+
+    Result addWatch(Long id);
 }

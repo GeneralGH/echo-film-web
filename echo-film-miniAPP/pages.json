@@ -13,7 +13,7 @@
 			"path" : "pages/tabbar/user",
 			"style" : 
 			{
-				"navigationBarTitleText" : "用户",
+				"navigationBarTitleText" : "我的",
 				"enablePullDownRefresh" : false
 			}
 		},
@@ -22,6 +22,38 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "搜索",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/film/detail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "详情",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/login/login",
+			"style" : 
+			{
+				"navigationBarTitleText" : "登录",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/user/updatePassword",
+			"style" : 
+			{
+				"navigationBarTitleText" : "修改密码",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/user/collect",
+			"style" : 
+			{
+				"navigationBarTitleText" : "收藏",
 				"enablePullDownRefresh" : false
 			}
 		}

@@ -130,7 +130,7 @@ export default {
     getList() {
       this.$request.post(filmApi.getFilmListUrl, this.listQuery)
         .then(res => {
-          this.data = res.data.data.map((item) => { return { ...item, delShow: false, previewShow: false } })
+          this.data = res.data.data.list.map((item) => { return { ...item, delShow: false, previewShow: false } })
           this.totalCount = res.data.data.total
         })
     },

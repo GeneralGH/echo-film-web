@@ -57,4 +57,10 @@ public class UserController {
     public Result login(@RequestBody User user) {
         return userService.login(user);
     }
+
+    @ApiOperation("修改密码")
+    @PostMapping("/updatePassword")
+    public Result updatePassword(@RequestBody User user) {
+        return userService.updatePassword(user);
+    }
 }

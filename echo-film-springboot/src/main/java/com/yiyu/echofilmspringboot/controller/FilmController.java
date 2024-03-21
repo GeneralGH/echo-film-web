@@ -63,4 +63,10 @@ public class FilmController {
     public Result delFilm(@PathVariable Long id) {
         return filmService.delFilm(id);
     }
+
+    @ApiOperation("增加观看量")
+    @GetMapping("/addWatch/{id}")
+    public Result addWatch(@PathVariable Long id) {
+        return filmService.addWatch(id);
+    }
 }

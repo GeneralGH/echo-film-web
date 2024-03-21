@@ -91,4 +91,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
         }
     }
+
+    @Override
+    public Result updatePassword(User user) {
+        User user1 = userMapper.selectById(user.getUserId());
+        String oldPassword = user1.getUserPassword();
+        String newPassword = user.getUserPassword();
+        if (oldPassword.equals(newPassword)) {
+            user1.setUserPassword(newPassword);
+            userMapper.updateById(user1);
+            return Result.success("修改成功");
+        } else {
+            return Result.error("密码不匹配");
+        }
+    }
 }

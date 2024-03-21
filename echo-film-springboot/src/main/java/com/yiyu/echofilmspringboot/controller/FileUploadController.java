@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/file")
 public class FileUploadController {
-    private String Path = "E:\\workSpace\\echo-film-web\\films\\";
+    private String Path = "E:\\workSpace\\films\\";
     private String IP = "http://localhost:8090";
 
     /**
