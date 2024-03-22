@@ -46,7 +46,7 @@
                 <div class="tdesign-demo-image-viewer__ui-image" @click="open">
                   <img alt="test" :src="JSON.parse(row.cover).url" class="tdesign-demo-image-viewer__ui-image--img" />
                   <div class="tdesign-demo-image-viewer__ui-image--hover">
-                    <span><browse-icon size="1.4em" /> 预览</span>
+                    <span>预览</span>
                   </div>
                 </div>
               </template>

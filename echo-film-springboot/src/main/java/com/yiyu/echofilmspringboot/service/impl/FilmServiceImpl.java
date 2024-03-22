@@ -38,7 +38,14 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
             queryWrapper.like("name", name);
         }
         if (filmType != null && !filmType.isEmpty()) {
-            queryWrapper.like("type_ids", "%" + filmType + "%");
+            String[] typeIds = filmType.split(",");
+            queryWrapper.and(wrapper -> {
+                for (String typeId : typeIds) {
+                    wrapper.or().like("type_ids", typeId + ",%");
+                    wrapper.or().like("type_ids", "%," + typeId);
+                    wrapper.or().like("type_ids", "%," + typeId + ",%");
+                }
+            });
         }
         if (isRecommend != null && !isRecommend.isEmpty()) {
             queryWrapper.like("is_recommend", isRecommend);
@@ -95,5 +102,25 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
         film.setWatchNumber(watchNumber);
         filmMapper.updateById(film);
         return Result.success("成功");
+    }
+
+    @Override
+    public Result getRecommendListByType(String filmType) {
+        // 构建查询条件
+        QueryWrapper<Film> queryWrapper = new QueryWrapper<>();
+        if (filmType != null && !filmType.isEmpty()) {
+            String[] typeIds = filmType.split(",");
+            queryWrapper.and(wrapper -> {
+                for (String typeId : typeIds) {
+                    wrapper.or().like("type_ids", typeId + ",%");
+                    wrapper.or().like("type_ids", "%," + typeId);
+                    wrapper.or().like("type_ids", "%," + typeId + ",%");
+                }
+            });
+        }
+        // 执行分页查询
+        List<Film> films = filmMapper.selectList(queryWrapper);
+        // 返回Result对象
+        return Result.success(films);
     }
 }

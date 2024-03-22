@@ -1,9 +1,9 @@
 <template>
 	<view style="padding: 0 20rpx;">
 		<view class="search-area">
-			<u-search :clearabled="true"></u-search>
+			<u-search v-model="listQuery.name" :clearabled="true" @search="search" @custom="search"></u-search>
 		</view>
-		<scroll-view scroll-y="true" :style="scrollHeightStr">
+		<scroll-view scroll-y="true" :style="scrollHeightStr" @scrolltolower="getList">
 			<FilmList :filmList="list" :col="1" />
 		</scroll-view>
 	</view>
@@ -48,6 +48,12 @@
 							}
 						})
 					})
+			},
+			
+			search() {
+				this.listQuery.pageNum = 1
+				this.list = []
+				this.getList()
 			},
 			
 			async setScrollHeight() {

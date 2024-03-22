@@ -69,4 +69,11 @@ public class FilmController {
     public Result addWatch(@PathVariable Long id) {
         return filmService.addWatch(id);
     }
+
+    @ApiOperation("根据类型获取相关类型影片列表")
+    @PostMapping("/getRecommendListByType")
+    public Result getRecommendListByType(@RequestBody FilmListRequest request) {
+        String filmType = request.getFilmType();
+        return filmService.getRecommendListByType(filmType);
+    }
 }

@@ -15,3 +15,18 @@ export const getRecommendFilmList = ()=> {
 		method: 'get'
 	})
 };
+
+export const getRecommendListByType = (data)=> {
+	return request({
+		url:'/api/film/getRecommendListByType',
+		method: 'post',
+		data
+	})
+};
+
+export const addWatch = (id)=> {
+	return request({
+		url:'/api/film/addWatch/' + id,
+		method: 'get'
+	})
+};

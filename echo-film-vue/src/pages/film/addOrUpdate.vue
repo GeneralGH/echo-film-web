@@ -133,7 +133,6 @@ export default {
                 if (this.actionType == 2) {
                     this.formData = JSON.parse(JSON.stringify(this.editObj))
                     this.typeIds = this.formData.typeIds.split(',')
-                    console.log(this.typeIds)
                     this.coverList.push(JSON.parse(this.formData.cover))
                     this.filmList.push(JSON.parse(this.formData.filmUrl))
                 }
@@ -224,13 +223,16 @@ export default {
         },
 
         async uploadCover(file) {
+            file.raw.name = encodeURI(file.raw.name)
             const res = await uploadFilesToServer('file', file.raw)
-            this.coverList.push({ name: res.response.data.fileName, url: res.response.data.url })
+            this.coverList.push({ name: file.name, url: res.response.data.url })
         },
 
         async uploadFilm(file) {
+            console.log(file.raw.name)
+            file.raw.name = encodeURI(file.raw.name)
             const res = await uploadFilesToServer('file', file.raw)
-            this.filmList.push({ name: res.response.data.fileName, url: res.response.data.url })
+            this.filmList.push({ name: file.name, url: res.response.data.url })
         }
     },
     //生命周期 - 创建完成（可以访问当前this实例）
