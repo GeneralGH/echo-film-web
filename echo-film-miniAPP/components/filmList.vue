@@ -2,7 +2,7 @@
 	<view>
 		<u-grid :border="false" :col="col">
 			<u-grid-item v-for="(item,index) in filmList" :key="item.filmId" @click="toDetail(item)">
-				<view class="film-item" :style="col == 2 ? 'height: 300rpx;' : 'height: 400rpx;'">
+				<view class="film-item" :style="col == 2 ? 'height: 300rpx;' : 'height: 450rpx;'">
 					<image :src="item.coverUrl" mode="aspectFill" :style="col == 2 ? 'height: 200rpx;' : 'height: 320rpx;'"></image>
 					<view class="film-title">{{ item.name }}</view>
 					<view class="film-subTitle">

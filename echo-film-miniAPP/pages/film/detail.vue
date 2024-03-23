@@ -132,11 +132,24 @@
 		},
 
 		async onLoad() {
-			await this.getFilmTypeList()
-			this.initData()
-			this.$refs.uReadMore.init();
-			this.getCurrentFilmCollectSatus(this.filmObj.filmId, uni.getStorageSync('userInfo').userId)
-			this.getRecommendList()
+			let isLogin = uni.getStorageSync('userInfo') ? true : false
+			if (!isLogin) {
+				uni.showToast({
+					title: '请先登录',
+					icon: 'none'
+				})
+				setTimeout(() => {
+					uni.redirectTo({
+						url: '/pages/login/login'
+					})
+				}, 2000)
+			} else {
+				await this.getFilmTypeList()
+				this.initData()
+				this.$refs.uReadMore.init();
+				this.getCurrentFilmCollectSatus(this.filmObj.filmId, uni.getStorageSync('userInfo').userId)
+				this.getRecommendList()
+			}
 		},
 
 		onUnload() {
@@ -165,6 +178,10 @@
 					font-weight: bold;
 					font-size: 32rpx;
 				}
+			}
+			
+			.film-info {
+				word-break: break-all;
 			}
 		}
 		

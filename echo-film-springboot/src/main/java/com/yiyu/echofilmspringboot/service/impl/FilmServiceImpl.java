@@ -123,4 +123,17 @@ public class FilmServiceImpl extends ServiceImpl<FilmMapper, Film> implements IF
         // 返回Result对象
         return Result.success(films);
     }
+
+    @Override
+    public Result getFilmsListByFilmIds(String[] ids) {
+        // 构建查询条件
+        QueryWrapper<Film> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("film_id", ids);
+
+        // 执行查询
+        List<Film> films = filmMapper.selectList(queryWrapper);
+
+        // 返回Result对象
+        return Result.success(films);
+    }
 }

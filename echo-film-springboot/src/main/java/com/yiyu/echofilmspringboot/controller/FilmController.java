@@ -76,4 +76,10 @@ public class FilmController {
         String filmType = request.getFilmType();
         return filmService.getRecommendListByType(filmType);
     }
+
+    @ApiOperation("根据影片Ids获取影片列表")
+    @PostMapping("/getFilmsListByFilmIds")
+    public Result getFilmsListByFilmIds(@RequestBody String[] ids) {
+        return filmService.getFilmsListByFilmIds(ids);
+    }
 }

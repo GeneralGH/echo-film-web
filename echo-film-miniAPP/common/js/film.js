@@ -30,3 +30,11 @@ export const addWatch = (id)=> {
 		method: 'get'
 	})
 };
+
+export const getFilmsListByFilmIds = (data)=> {
+	return request({
+		url:'/api/film/getFilmsListByFilmIds',
+		method: 'post',
+		data
+	})
+};

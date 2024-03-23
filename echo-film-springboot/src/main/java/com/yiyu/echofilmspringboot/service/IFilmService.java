@@ -30,4 +30,6 @@ public interface IFilmService extends IService<Film> {
     Result addWatch(Long id);
 
     Result getRecommendListByType(String filmType);
+
+    Result getFilmsListByFilmIds(String[] ids);
 }

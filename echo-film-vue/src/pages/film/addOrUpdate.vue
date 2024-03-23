@@ -223,14 +223,11 @@ export default {
         },
 
         async uploadCover(file) {
-            file.raw.name = encodeURI(file.raw.name)
             const res = await uploadFilesToServer('file', file.raw)
             this.coverList.push({ name: file.name, url: res.response.data.url })
         },
 
         async uploadFilm(file) {
-            console.log(file.raw.name)
-            file.raw.name = encodeURI(file.raw.name)
             const res = await uploadFilesToServer('file', file.raw)
             this.filmList.push({ name: file.name, url: res.response.data.url })
         }
