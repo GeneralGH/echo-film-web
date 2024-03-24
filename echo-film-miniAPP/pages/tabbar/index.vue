@@ -3,7 +3,7 @@
 		<HomeHeader @typeChange="typeChange" id="home-header" />
 		<scroll-view scroll-y="true" :style="scrollHeightStr" @scrolltolower="scrollToLower">
 			<view class="swiper-area">
-				<u-swiper :list="recommendList" keyName="coverUrl" showTitle indicator circular :radius="10" height="350rpx"></u-swiper>
+				<u-swiper @click="swiperJump" :list="recommendList" keyName="coverUrl" showTitle indicator circular :radius="10" height="350rpx"></u-swiper>
 			</view>
 			<FilmList :filmList="list" :col="2" />
 		</scroll-view>
@@ -79,6 +79,13 @@
 							}
 						})
 					})
+			},
+			
+			swiperJump(index) {
+				this.$store.commit('setFilm', this.recommendList[index])
+				uni.navigateTo({
+					url: '/pages/film/detail'
+				})
 			},
 			
 			scrollToLower() {

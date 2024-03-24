@@ -11,7 +11,7 @@
 			</view>
 		</view>
 
-		<view class="user-setting">
+		<view class="user-setting" v-if="isLogin">
 			<view class="collect" @click="jump('/pages/user/collect')">
 				收藏列表
 			</view>

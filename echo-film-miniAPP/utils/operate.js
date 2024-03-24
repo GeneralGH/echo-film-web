@@ -4,18 +4,18 @@ export default {
 	    let version = wx.getAccountInfoSync().miniProgram.envVersion;
 	    switch (version) {
 			case "develop": //开发预览版
-				return "http://localhost:8090"
+				return "https://echofilm.lmtss.fun"
 				break;
 			case 'trial': //体验版
-				return "https://djxcx.guoyunxinke.com/cpbApps/"
+				return "https://echofilm.lmtss.fun"
 				break;
 			case 'release': //正式版				
-				return "https://djxcx.guoyunxinke.com/cpbApps/"
+				return "https://echofilm.lmtss.fun"
 				// return "https://xcx.xzbdc.com/cpbApps/"
 				// return "https://wxxz.xzbdc.com/cpbApps/"
 				break;
 			default: //未知,默认调用正式版
-				return "https://djxcx.guoyunxinke.com/cpbApps/"
+				return "https://echofilm.lmtss.fun"
 				break;
 		}
 	}
