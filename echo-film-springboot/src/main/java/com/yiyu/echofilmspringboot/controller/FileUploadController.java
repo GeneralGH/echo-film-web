@@ -15,8 +15,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/file")
 public class FileUploadController {
-    private String Path = "G:\\CodeSpace\\films\\";
-    private String IP = "http://localhost:8090";
+    private String Path = "/www/wwwroot/echoFilmStatic/";
+    private String IP = "https://echofilm.lmtss.fun";
 
     /**
      * 文件上传
