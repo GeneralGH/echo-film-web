@@ -27,7 +27,7 @@
 		data() {
 			return {
 				// 获取菜单按钮（右上角胶囊按钮）的布局位置信息。坐标信息以屏幕左上角为原点。
-				menuBottonRes: wx.getMenuButtonBoundingClientRect(),
+				menuBottonRes: '',
 				searchPosition: '',
 				list: [],
 				currentType: 0
@@ -54,7 +54,15 @@
 			}
 		},
 		created() {
+			// #ifdef MP-WEIXIN
+			this.menuBottonRes = wx.getMenuButtonBoundingClientRect()
 			this.searchPosition = `top: ${this.menuBottonRes.top}px; left: ${this.menuBottonRes.left / 2 - 70}px; height: ${this.menuBottonRes.height}px; line-height: ${this.menuBottonRes.height}px`
+			// #endif
+			
+			// #ifdef APP
+			this.searchPosition = 'transform: translate(-50%, 50%); left: 50%; top: 30%'
+			// #endif
+			
 			this.getTypeList()
 		}
 	}

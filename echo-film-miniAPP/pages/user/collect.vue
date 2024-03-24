@@ -29,6 +29,9 @@
 				let userId = uni.getStorageSync('userInfo').userId
 				getUserCollect(userId)
 					.then(res => {
+						if (res.data.length == 0) {
+							return
+						}
 						let collectFilmIds = res.data.map((item) => {
 							return item.filmId
 						})

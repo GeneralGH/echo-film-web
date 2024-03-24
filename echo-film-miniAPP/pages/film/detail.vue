@@ -146,7 +146,6 @@
 			} else {
 				await this.getFilmTypeList()
 				this.initData()
-				this.$refs.uReadMore.init();
 				this.getCurrentFilmCollectSatus(this.filmObj.filmId, uni.getStorageSync('userInfo').userId)
 				this.getRecommendList()
 			}
