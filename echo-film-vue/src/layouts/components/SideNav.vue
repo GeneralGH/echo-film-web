@@ -10,7 +10,8 @@
     >
       <template #logo>
         <span v-if="showLogo" :class="`${prefix}-side-nav-logo-wrapper`" @click="() => handleNav('/dashboard/base')">
-          <component :is="getLogo" :class="`${prefix}-side-nav-logo-${collapsed ? 't' : 'tdesign'}-logo`" />
+         <!--  <component :is="getLogo" :class="`${prefix}-side-nav-logo-${collapsed ? 't' : 'tdesign'}-logo`" /> -->
+         <h2>回声影视</h2>
         </span>
       </template>
       <menu-content :navData="menu" />

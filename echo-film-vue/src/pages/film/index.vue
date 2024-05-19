@@ -51,9 +51,6 @@
                 </div>
               </template>
             </t-image-viewer>
-            <!-- <div style="overflow: hidden; width: 150px; height: 200px; margin: 0 auto;">
-              <img :src="JSON.parse(row.cover).url" style="width: 150px;" />
-            </div> -->
           </template>
           <template #releaseTime="{ row }">
             {{ row.releaseTime.substring(0, 10) }}

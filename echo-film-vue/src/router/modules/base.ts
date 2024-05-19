@@ -42,22 +42,4 @@ export default [
       }
     ],
   }
-  /* {
-    path: '/filmType',
-    component: Layout,
-    redirect: '/filmType',
-    name: 'filmType',
-    meta: {
-      title: '影视类型',
-      single: true
-    },
-    children: [
-      {
-        path: '/filmType',
-        name: 'filmType',
-        component: () => import('@/pages/filmType/index.vue'),
-        meta: { title: '影视类型' },
-      }
-    ],
-  } */
 ];

@@ -15,14 +15,4 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("*");
     }
-
-    /* 某些版本的写法
-   ublic void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 允许跨域访问的路径
-                .allowedOrigins("*")//允许跨域访问的源
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // 允许请求方法
-                .maxAge(168000) // 预检间隔时间
-                .allowedHeaders("*") //允许头部设置
-                .allowCredentials(true); // 是否发送 Cookie
-    }*/
 }
